@@ -1,0 +1,1 @@
+"""Preference manager for PasteTray."""
