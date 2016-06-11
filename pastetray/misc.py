@@ -23,18 +23,25 @@
 
 import contextlib
 import functools
+import os
+import tempfile
+import urllib.request
 import webbrowser
 
 from gi.repository import Gtk, GdkPixbuf
-from pkg_resources import resource_filename, resource_string
+from pkg_resources import (resource_filename, resource_stream,
+                           resource_string)
 
 import pastetray
+from pastetray import filepaths
 
 
 def ignore_first(func):
     """Return a function that ignores the first argument and calls func.
 
-    TypeError will be raised if no arguments are given.
+    The returned function will return the value returned by func.
+    TypeError will be raised if no arguments are given to the returned
+    function.
     """
     @functools.wraps(func)
     def wrapper(ign, *args, **kwargs):
@@ -53,8 +60,26 @@ def disconnected(obj, signal, func, *user_data):
 def show_help():
     """Open the help page in the web browser."""
     # Here resource_filename must be used because web browsers open
-    # URL's and filenames.
-    webbrowser.open(resource_filename('pastetray', 'help.html'))
+    # URL's, not data.
+    try:
+        filename = resource_filename('pastetray', 'help.html')
+    except NotImplementedError:
+        # Running from a zipfile.
+        filename = os.path.join(tempfile.gettempdir(), 'pastetray-help.html')
+        with resource_stream('pastetray', 'help.html') as src:
+            with open(filename, 'wb') as dst:
+                dst.write(src.read())
+
+    # URL's don't contain non-ASCII characters.
+    url = 'file://' + urllib.request.pathname2url(filename)
+
+    # On GNU/Linux (and probably any other operating system running X),
+    # webbrowser.open() uses xdg-open by default instead of
+    # x-www-browser, so local HTML files don't necessarily open in a WWW
+    # browser even if 'file://' is prepended to the URL. That's why
+    # x-www-browser is used instead when possible.
+    browser = webbrowser.BackgroundBrowser('x-www-browser')
+    browser.open(url) or webbrowser.open(url)
 
 
 def show_about():

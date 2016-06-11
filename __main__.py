@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright (c) 2016 Akuli
 
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,4 +21,13 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""A dummy file to make this a package."""
+"""A main file to allow distributing this as a zipfile.
+
+You can also run this as a standalone Python script if you don't want
+to use the -m option for some reason.
+"""
+
+from pastetray.__main__ import main
+
+if __name__ == '__main__':
+    main()

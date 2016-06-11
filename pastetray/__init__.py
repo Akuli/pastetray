@@ -38,13 +38,12 @@ def _get_translation():
             path = 'locale/{}.mo'.format(lang)
             with resource_stream('pastetray', path) as fp:
                 return gettext.GNUTranslations(fp)
-        except FileNotFoundError:
+        except OSError:
             if '_' not in lang:
                 # Give up.
                 return gettext.NullTranslations()
-        # Remove the last whitespace and everything after it, and keep
-        # going.
-        lang = lang.rpartition('_')[0]
+            # Remove the last part and keep going.
+            lang = lang.rpartition('_')[0]
 
 
 gi.require_version('Gtk', '3.0')
@@ -60,19 +59,23 @@ TRANSLATORS = {
     _("Finnish"): "Akuli",
 }
 
-# General information.
-SHORT_DESC = _("a simple application for using online pastebins")
+# General information. Only string literals are passed to _() to make
+# sure pygettext will work properly.
+SHORT_DESC = "a simple application for using online pastebins"
+SHORT_DESC_TRANS = _("a simple application for using online pastebins")
 LONG_DESC = _("This program displays a paste icon in the system tray. "
               "The tray icon can be clicked and new pastes to online "
               "pastebins can be easily made.")
+
+URL = 'https://github.com/Akuli/pastetray/'
 VERSION = '1.0-beta'
 KEYWORDS = ["pastebin", "Gtk+3"]
 USER_AGENT = "PasteTray/" + VERSION
 
 # The setup.py needs to do other checks too, because not all
 # dependencies can be installed with pip.
-PIP_DEPENDS = ['appdirs', 'psutil', 'requests']
-# This list is more complete.
+PIP_DEPENDS = ['appdirs', 'lockfile', 'requests']
+# This list is more complete, but there's no python3-lockfile yet.
 DEBIAN_DEPENDS = ['gir1.2-gtk-3.0', 'gir1.2-appindicator3-0.1',
-                  'python3-gi', 'python3-appdirs', 'python3-psutil',
+                  'python3-gi', 'python3-appdirs', 'python3-lockfile',
                   'python3-requests']
