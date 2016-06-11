@@ -1,0 +1,98 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Akuli <you@never.know>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2016-06-10 22:02+EEST\n"
+"PO-Revision-Date: 2016-06-10 22:11+0300\n"
+"Last-Translator: Akuli <you@never.know>\n"
+"Language-Team: suomi <you@never.know>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.6\n"
+
+#: __init__.py:41
+msgid "Finnish"
+msgstr "Suomi"
+
+#: __init__.py:45
+msgid "a simple application for using online pastebins"
+msgstr "yksinkertainen ohjelma pastebinien käyttöä varten"
+
+#: __init__.py:46
+msgid ""
+"This program displays a paste icon in the system tray. The tray icon can be "
+"clicked and new pastes to online pastebins can be easily made."
+msgstr ""
+"Tämä ohjelma näyttää liittämiskuvakkeen järjestelmän ilmoitusalueella. Sitä "
+"klikkaamalla voi helposti lähettää tekstiä pastebineihin."
+
+#: new_paste.py:44 trayicon.py:64
+msgid "New paste"
+msgstr "Uusi teksti"
+
+#: new_paste.py:45
+msgid "The title of this paste"
+msgstr "Tämän tekstin otsikko"
+
+#: new_paste.py:46
+msgid "The content of this paste"
+msgstr "Tämän tekstin sisältö"
+
+#: new_paste.py:47
+msgid "Pastebin:"
+msgstr "Pastebin:"
+
+#: new_paste.py:48
+msgid "Syntax highlighting:"
+msgstr "Syntaksivärit:"
+
+#: new_paste.py:49
+msgid "Your name:"
+msgstr "Nimesi:"
+
+#: new_paste.py:50
+msgid "Expiry in days:"
+msgstr "Kesto päivissä:"
+
+#: new_paste.py:213
+msgid "Pasting succeeded."
+msgstr "Lähettäminen onnistui."
+
+#: new_paste.py:215
+msgid "Success"
+msgstr "Onnistui"
+
+#: new_paste.py:225
+msgid "Pasting failed!"
+msgstr "Lähettäminen epäonnistui!"
+
+#: new_paste.py:227
+msgid "Error"
+msgstr "Virhe"
+
+#: trayicon.py:65
+msgid "Preferences"
+msgstr "Asetukset"
+
+#: trayicon.py:66
+msgid "Help"
+msgstr "Apua"
+
+#: trayicon.py:67
+msgid "About"
+msgstr "Tietoja"
+
+#: trayicon.py:68
+msgid "Quit"
+msgstr "Poistu"
+
+#: trayicon.py:95
+msgid "(no pastes)"
+msgstr "(ei tekstejä)"

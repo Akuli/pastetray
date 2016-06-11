@@ -19,45 +19,21 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""Run the program."""
+"""This is a hastebin file for PasteTray.
 
-import argparse
-import os
-import sys
+Thanks to __Myst__ <https://github.com/SquishyStrawberry/> for making
+the original pasting script. This script is my version of it.
+"""
 
-import filelock
-from gi.repository import Gtk
+import requests
 
-from pastetray import backend, filepaths, trayicon
-
-
-def main(args=None):
-    """Run the program."""
-    parser = argparse.ArgumentParser()
-    parser.parse_args(args or sys.argv[1:])
-
-    lock = filelock.FileLock(os.path.join(filepaths.user_cache_dir, 'lock'))
-    try:
-        with lock.acquire(timeout=0):
-            backend.load()
-            trayicon.load()
-            trayicon.update()
-            Gtk.main()
-            backend.unload()
-    except filelock.Timeout:
-        dialog = Gtk.MessageDialog(
-            # Setting None as the parent is usually a bad idea, but in
-            # this case there is no parent window
-            None, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK,
-            _("{} is already running.").format("PasteTray"),
-            title="PasteTray",
-        )
-        dialog.run()
-        dialog.destroy()
-
-    # This function is not meant to be ran multiple times.
-    sys.exit()
+name = 'hastebin'
+url = 'http://hastebin.com/'
+expiry_days = [30]
 
 
-if __name__ == '__main__':
-    main()
+def paste(content, expiry_days):
+    """Make a paste to dpaste.com."""
+    response = requests.post('http://hastebin.com/documents/', data=content)
+    response.raise_for_status()
+    return 'http://hastebin.com/' + response.json()['key']
