@@ -22,7 +22,7 @@
 """This is a Paste ofCode file for PasteTray.
 
 Thanks to __Myst__ <https://github.com/SquishyStrawberry/> for making
-the original pasting script. This script is my version of it.
+the original pasting script. This file is my version of it.
 """
 
 import requests
@@ -34,8 +34,8 @@ use_syntax_colors = True
 expiry_days = [7]
 default_syntax = 'Text only'
 syntax_choices = {
-    # This was generated with syntax_getters/paste_ofcode.py in the
-    # source package.
+    # This was generated with scripts/syntax_getters/paste_ofcode.py in
+    # the PasteTray source package.
     'ABAP': 'abap',
     'ActionScript': 'as',
     'ActionScript 3': 'as3',

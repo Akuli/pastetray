@@ -76,6 +76,6 @@ USER_AGENT = "PasteTray/" + VERSION
 # dependencies can be installed with pip.
 PIP_DEPENDS = ['appdirs', 'lockfile', 'requests']
 # This list is more complete, but there's no python3-lockfile yet.
-DEBIAN_DEPENDS = ['gir1.2-gtk-3.0', 'gir1.2-appindicator3-0.1',
-                  'python3-gi', 'python3-appdirs', 'python3-lockfile',
-                  'python3-requests']
+DEBIAN_DEPENDS = ['python3-appdirs', 'python3-lockfile',
+                  'python3-pkg_resources', 'python3-requests', 'python3-gi',
+                  'gir1.2-gtk-3.0', 'gir1.2-appindicator3-0.1']

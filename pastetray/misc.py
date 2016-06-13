@@ -68,7 +68,7 @@ def show_help():
         filename = os.path.join(tempfile.gettempdir(), 'pastetray-help.html')
         with resource_stream('pastetray', 'help.html') as src:
             with open(filename, 'wb') as dst:
-                dst.write(src.read())
+                shutil.copyfileobj(src, dst)
 
     # URL's don't contain non-ASCII characters.
     url = 'file://' + urllib.request.pathname2url(filename)

@@ -25,7 +25,6 @@ from gi.repository import Gtk, Gdk
 
 from pastetray import trayicon_menu
 
-# AppIndicator3 may not be installed.
 try:
     from gi.repository import AppIndicator3     # NOQA
 except ImportError:

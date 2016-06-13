@@ -32,8 +32,8 @@ use_username = True
 expiry_days = [1, 7, 30, 365]
 default_syntax = 'Plain text'
 syntax_choices = {
-    # This was generated with syntax_getters/dpaste.py in the source
-    # package.
+    # This was generated with scripts/syntax_getters/dpaste.py in the
+    # PasteTray source package.
     'Ada': 'ada',
     'Apache config': 'apacheconf',
     'APL': 'apl',

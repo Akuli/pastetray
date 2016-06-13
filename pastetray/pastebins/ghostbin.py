@@ -22,7 +22,7 @@
 """This is a Paste ofCode file for PasteTray.
 
 Thanks to brianx <TODO: add a github link> for making the original
-pasting script. This script is my version of it.
+pasting script. This file is my version of it.
 """
 
 import requests
@@ -35,8 +35,8 @@ use_title = True
 expiry_days = [1, 7, 30, 365]
 default_syntax = 'Plain Text'
 syntax_choices = {
-    # This was generated with syntax_getters/paste_ofcode.py in the
-    # source package.
+    # This was generated with scripts/syntax_getters/ghostbin.py in the
+    # PasteTray source package.
     'ABAP': 'abap',
     'ActionScript': 'as',
     'ActionScript 3': 'as3',

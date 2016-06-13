@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright (c) 2016 Akuli
 
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,21 +21,31 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""This is a hastebin file for PasteTray.
+"""Make a PasteTray zipfile.
 
-Thanks to __Myst__ <https://github.com/SquishyStrawberry/> for making
-the original pasting script. This file is my version of it.
+PasteTray's source code should be in the parent directory, and the zip
+will be placed there too.
 """
 
-import requests
+import os
+import shutil
+import tempfile
+import zipfile
 
-name = 'hastebin'
-url = 'http://hastebin.com/'
-expiry_days = [30]
+os.chdir(os.path.pardir)
 
+for root, dirs, files in os.walk(os.path.curdir):
+    for d in dirs:
+        if d == '__pycache__':
+            shutil.rmtree(os.path.join(root, d))
 
-def paste(content, expiry_days):
-    """Make a paste to dpaste.com."""
-    response = requests.post('http://hastebin.com/documents/', data=content)
-    response.raise_for_status()
-    return 'http://hastebin.com/' + response.json()['key']
+# TODO: Use os.walk and write directly to the final file instead of
+# making a temporary zipfile and copying its content.
+tempzip = os.path.join(tempfile.gettempdir(), 'pastetray-build.zip')
+zipfile.main(['-c', tempzip, 'LICENSE', '__main__.py',
+              'pastetray', 'README.md'])
+
+with open('pastetray.pyz', 'wb') as dst:
+    dst.write(b'#!/usr/bin/env python3\n')
+    with open(tempzip, 'rb') as src:
+        shutil.copyfileobj(src, dst)
