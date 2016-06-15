@@ -30,8 +30,9 @@ from gi.repository import GObject
 from pkg_resources import resource_stream
 
 
+# Internationalization.
 def _get_translation():
-    """Return a gettext.GNUTranslations instance."""
+    """Return a gettext translation."""
     lang = locale.getdefaultlocale()[0]
     while True:
         try:
@@ -46,10 +47,12 @@ def _get_translation():
             lang = lang.rpartition('_')[0]
 
 
+_ = _get_translation().gettext
+
 gi.require_version('Gtk', '3.0')
 GObject.threads_init()
+
 signal.signal(signal.SIGINT, signal.SIG_DFL)
-_ = _get_translation().gettext
 
 
 # Add your name here if you've helped with making this program but your
@@ -72,8 +75,8 @@ VERSION = '1.0-beta'
 KEYWORDS = ["pastebin", "Gtk+3"]
 USER_AGENT = "PasteTray/" + VERSION
 
-# The setup.py needs to do other checks too, because not all
-# dependencies can be installed with pip.
+# The setup.py needs to do other checks too because some dependencies
+# cannot be installed with pip.
 PIP_DEPENDS = ['appdirs', 'lockfile', 'requests']
 # This list is more complete, but there's no python3-lockfile yet.
 DEBIAN_DEPENDS = ['python3-appdirs', 'python3-lockfile',

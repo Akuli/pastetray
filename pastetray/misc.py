@@ -19,13 +19,13 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""Miscellaneous things."""
+"""Miscellaneous functions."""
 
 import contextlib
 import functools
 import os
 import tempfile
-import urllib.request
+from urllib.request import pathname2url
 import webbrowser
 
 from gi.repository import Gtk, GdkPixbuf
@@ -39,9 +39,10 @@ from pastetray import filepaths
 def ignore_first(func):
     """Return a function that ignores the first argument and calls func.
 
-    The returned function will return the value returned by func.
-    TypeError will be raised if no arguments are given to the returned
-    function.
+    When called, the returned function will call the original func
+    without the first argument and return the value it returns. An
+    exception is raised when no arguments are given and there's nothing
+    to ignore.
     """
     @functools.wraps(func)
     def wrapper(ign, *args, **kwargs):
@@ -57,10 +58,8 @@ def disconnected(obj, signal, func, *user_data):
     obj.connect(signal, func, *user_data)
 
 
-def show_help():
+def show_help(widget=None):
     """Open the help page in the web browser."""
-    # Here resource_filename must be used because web browsers open
-    # URL's, not data.
     try:
         filename = resource_filename('pastetray', 'help.html')
     except NotImplementedError:
@@ -70,28 +69,25 @@ def show_help():
             with open(filename, 'wb') as dst:
                 shutil.copyfileobj(src, dst)
 
-    # URL's don't contain non-ASCII characters.
-    url = 'file://' + urllib.request.pathname2url(filename)
+    url = 'file://' + pathname2url(filename)
 
-    # On GNU/Linux (and probably any other operating system running X),
-    # webbrowser.open() uses xdg-open by default instead of
-    # x-www-browser, so local HTML files don't necessarily open in a WWW
-    # browser even if 'file://' is prepended to the URL. That's why
-    # x-www-browser is used instead when possible.
-    browser = webbrowser.BackgroundBrowser('x-www-browser')
-    browser.open(url) or webbrowser.open(url)
+    # On X.Org, webbrowser.open() seems to use xdg-open by default
+    # instead of x-www-browser, so HTML files don't always open in a WWW
+    # browser. That's why x-www-browser is used when possible.
+    try:
+        webbrowser.get('x-www-browser').open(url)
+    except webbrowser.Error:
+        webbrowser.open(url)
 
 
-def show_about():
+def show_about(widget=None):
     """Display an about dialog."""
-    # Load the license and paste icon.
     license = resource_string('pastetray', 'LICENSE')
     logo = Gtk.IconTheme.get_default().lookup_icon(
         Gtk.STOCK_PASTE, Gtk.IconSize.DIALOG,
         Gtk.IconLookupFlags.NO_SVG,
     )
 
-    # Display a dialog.
     dialog = Gtk.AboutDialog()
     dialog.set_program_name("PasteTray")
     dialog.set_version(pastetray.VERSION)
@@ -99,7 +95,7 @@ def show_about():
                         pastetray.SHORT_DESC[1:] + ".")
     dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(logo.get_filename()))
     dialog.set_license(license.decode('utf-8'))
-    dialog.set_resizable(True)  # the license is a bit long
+    dialog.set_resizable(True)     # The license is a bit long.
     dialog.set_authors(pastetray.AUTHORS)
     dialog.set_translator_credits(
         '\n'.join(': '.join(item) for item in pastetray.TRANSLATORS.items())

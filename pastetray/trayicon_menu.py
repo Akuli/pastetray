@@ -47,10 +47,11 @@ def add_menu_content(menu):
         help_item = Gtk.MenuItem(_("Help"))
         about_item = Gtk.MenuItem(_("About"))
         quit_item = Gtk.MenuItem(_("Quit"))
-    new_item.connect('activate', misc.ignore_first(new_paste.new_paste))
-    pref_item.connect('activate', misc.ignore_first(preference_editor.run))
-    help_item.connect('activate', misc.ignore_first(misc.show_help))
-    about_item.connect('activate', misc.ignore_first(misc.show_about))
+
+    new_item.connect('activate', new_paste.new_paste)
+    pref_item.connect('activate', preference_editor.run)
+    help_item.connect('activate', misc.show_help)
+    about_item.connect('activate', misc.show_about)
     quit_item.connect('activate', Gtk.main_quit)
 
     menu.add(new_item)

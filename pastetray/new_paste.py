@@ -238,7 +238,7 @@ class _Paster(Gtk.Builder):
         self.get_object('window').destroy()
 
 
-def new_paste():
+def new_paste(widget=None):
     """Make a new paste."""
     paster = _Paster()
     paster.get_object('window').show_all()

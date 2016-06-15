@@ -42,6 +42,7 @@ def load():
     pastebins.clear()
     for name in resource_listdir('pastetray', 'pastebins'):
         if name.startswith('__') or name.endswith('__'):
+            # __init__.py, __pycache__ etc.
             continue
         name, ext = os.path.splitext(name)
         if ext != '.py':

@@ -22,5 +22,5 @@
 """A preference editing window."""
 
 
-def run():
+def run(widget=None):
     """Open a window for editing preferences."""
