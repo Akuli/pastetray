@@ -17,13 +17,13 @@ Writing custom pastebin scripts in Python is also possible.
 To run PasteTray, you need to install gi with GTK+ 3 and git if you
 don't already have them installed. You also need Python 3 with PIP. Most
 GNU/Linux distributions come with gi and GTK+ 3 installed, and you can
-install git and PIP on Debian-based distribution (like Ubuntu and Linux
+install git and PIP on Debian-based distribution (such Ubuntu or Linux
 Mint) by running this on a terminal (`$` is the prompt, don't type it
 literally):
 
     $ sudo aptitude install git python3-pip
 
-You can use apt-get if you don't have aptitude:
+You can also use apt-get if you don't have aptitude:
 
     $ sudo apt-get install git
 
@@ -34,6 +34,17 @@ important, it tells PIP that pastetray is a directory.
 
     $ git clone https://github.com/Akuli/pastetray
     $ pip install --user pastetray/
+
+Then you can run it like this:
+
+    $ pastetray &
+
+I'll make distribution packages (at least a Debian package) of PasteTray
+later to make installing it even easier.
+
+Uninstalling is also easy:
+
+    $ pip uninstall pastetray
 
 ### Authors
 
