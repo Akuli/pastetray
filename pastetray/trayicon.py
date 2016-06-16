@@ -31,10 +31,12 @@ except ImportError:
     # Gtk.StatusIcon is deprecated in new versions of GTK+.
     if not hasattr(Gtk, 'StatusIcon'):
         raise ImportError("AppIndicator3 is not installed and Gtk.StatusIcon "
-                          "is deprecated in the current version of GTK+.")
+                          "is deprecated in the current version of GTK+")
     print("AppIndicator3 is not installed, Gtk.StatusIcon "
           "will be used instead.")
     AppIndicator3 = None
+
+_menu = Gtk.Menu()
 
 
 def _on_click(statusicon, button, time):
@@ -56,10 +58,7 @@ def update():
 
 def load():
     """Load the trayicon."""
-    global _menu
     global _trayicon
-
-    _menu = Gtk.Menu()
     if AppIndicator3 is None:
         _trayicon = Gtk.StatusIcon()
         _trayicon.set_from_icon_name(Gtk.STOCK_PASTE)
