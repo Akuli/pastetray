@@ -12,43 +12,36 @@ These pastebins are supported by default:
 
 Writing custom pastebin scripts in Python is also possible.
 
-### Dependencies
+### Downloading, running and installing
 
-In order to run or install PasteTray you need to have these dependencies
-installed.
+To run PasteTray, you need to install gi with GTK+ 3 and git if you
+don't already have them installed. You also need Python 3 with PIP. Most
+GNU/Linux distributions come with gi and GTK+ 3 installed, and you can
+install git and PIP on Debian-based distribution (like Ubuntu and Linux
+Mint) by running this on a terminal (`$` is the prompt, don't type it
+literally):
 
-| Name                  | Debian package        | PyPi package  | Notes
-|-----------------------|-----------------------|---------------|----------
-| appdirs               | python3-appdirs       | appdirs       | 
-| lockfile              | none                  | lockfile      |
-| pip _[1]_             | python3-pip           | pip           | You don't need PIP to run without installing. |
-| pkg_resources         | python3-pkg-resources | pkg_resources |
-| requests              | python3-requests      | requests      |
-| git _[1]_             | python3-git           | none          | You can also download this program as a zip file.
-| gi                    | python3-gi            | none _[2]_    |
-| GTK+ 3 for gi         | gir1.2-gtk-3.0        | none          |
-| AppIndicator3 for gi  | gir1.2-gtk-3.0        | none          |
+    $ sudo aptitude install git python3-pip
 
-_[1] _
+You can use apt-get if you don't have aptitude:
 
-_[2] If you don't want to install git _
+    $ sudo apt-get install git
 
-_[3] Actually, there is a gi package in PyPi, but it's too old for
-PasteTray._
+When you have everything installed you can download PasteTray with git
+and install it with PIP. This will install it user-wide, everything will
+be inside your home directory. The `/` in the end of the PIP command is
+important, it tells PIP that pastetray is a directory.
 
-On a Debian-based distribution you can install some of the dependencies
-by opening a terminal and running these commmands (`$` is the prompt,
-don't type that literally):
+    $ git clone https://github.com/Akuli/pastetray
+    $ pip install --user pastetray/
 
-    $ sudo apt-get install python3-pip git python3-gi 
+### Authors
 
-You'll probably find most of these packages from your GNU/Linux
-distribution's package manager even if your distribution is not
-Debian-based, but the packages' names can be different.
+I am Akuli and I have written most of PasteTray, but I want to thank
+these people for helping me with it:
 
-You can use this command to install most of the dependencies with pip.
-This is user-wide so you don't need to worry about messing up your
-operating system's Python directories.
-
-    pip install --user appdirs pip pkg_resources requests
-
+- [SquishyStrawberry](https://github.com/SquishyStrawberry/) wrote the
+original versions of Paste ofCode and hastebin pasting scripts.
+- [Chisight](https://github.com/Chisight/) wrote the original ghostbin
+pasting script. His version of it is available in his
+[ghostbinit repository](https://github.com/Chisight/ghostbinit).
