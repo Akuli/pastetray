@@ -45,7 +45,7 @@ def load():
             # __init__.py, __pycache__ etc.
             continue
         name, ext = os.path.splitext(name)
-        if ext != '.py':
+        if ext != '.py' or not name.isidentifier():
             continue
         modulename = 'pastetray.pastebins.' + name
         module = importlib.import_module(modulename)
