@@ -40,7 +40,7 @@ Then you can run it like this:
     $ pastetray &
 
 I'll make distribution packages (at least a Debian package) of PasteTray
-later to make installing it even easier.
+later to make installing and running it even easier.
 
 Uninstalling is also easy:
 
