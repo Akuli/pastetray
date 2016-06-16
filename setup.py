@@ -74,8 +74,9 @@ setup(
     license='MIT',
     keywords=' '.join(i.replace(' ', '') for i in pastetray.KEYWORDS),
     zip_safe=True,
-    packages=['pastetray', 'pastetray.pastebins'],
     install_requires=pastetray.PIP_DEPENDS,
-    package_data={'pastetray': ['locale/*.mo']},
+    packages=['pastetray', 'pastetray.pastebins'],
+    package_data={'pastetray': ['LICENSE', '*.conf', '*.html',
+                                '*.glade', 'locale/*.mo']},
     entry_points={'gui_scripts': ['pastetray = pastetray.__main__:main']},
 )
