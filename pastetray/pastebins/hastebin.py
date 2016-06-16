@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Akuli
+# Copyright (c) 2016 Akuli, SquishyStrawberry
 
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,8 +21,8 @@
 
 """This is a hastebin file for PasteTray.
 
-Thanks to __Myst__ <https://github.com/SquishyStrawberry/> for making
-the original pasting script. This file is my version of it.
+Thanks to SquishyStrawberry <https://github.com/SquishyStrawberry/> for
+making the original pasting script. This file is my (Akuli's) version of it.
 """
 
 import requests

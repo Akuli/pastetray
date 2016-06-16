@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Akuli
+# Copyright (c) 2016 Akuli, Chisight
 
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,8 +21,9 @@
 
 """This is a Paste ofCode file for PasteTray.
 
-Thanks to brianx <TODO: add a github link> for making the original
-pasting script. This file is my version of it.
+Thanks to Chisight <https://github.com/Chisight/> for making the
+original pasting script. His version is available in his ghostbinit
+Github repository. This is my (Akuli's) version of it.
 """
 
 import requests
