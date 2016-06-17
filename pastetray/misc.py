@@ -84,7 +84,7 @@ def show_about(widget=None):
     """Display an about dialog."""
     license = resource_string('pastetray', 'LICENSE')
     logo = Gtk.IconTheme.get_default().lookup_icon(
-        Gtk.STOCK_PASTE, Gtk.IconSize.DIALOG,
+        Gtk.STOCK_PASTE, 128,
         Gtk.IconLookupFlags.NO_SVG,
     )
 
