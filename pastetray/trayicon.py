@@ -132,6 +132,11 @@ def _menuitems():
 _menuitems = dict(_menuitems())
 
 
+def _on_pasteitem_clicked(widget, url):
+    """Open url."""
+    webbrowser.open(url)
+
+
 def update():
     """Update the trayicon."""
     menu = trayicon_backend.menu
@@ -144,7 +149,7 @@ def update():
     if backend.recent_pastes:
         for number, url in enumerate(backend.recent_pastes, start=1):
             item = Gtk.MenuItem('{}. {}'.format(number, url))
-            item.connect('activate', misc.ignore_first(webbrowser.open), url)
+            item.connect('activate', _on_pasteitem_clicked, url)
             menu.add(item)
     else:
         item = Gtk.MenuItem(_("(no pastes)"))
