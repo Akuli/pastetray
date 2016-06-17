@@ -34,18 +34,21 @@ from pkg_resources import resource_stream
 def _get_translation():
     """Return a gettext translation."""
     lang = locale.getdefaultlocale()[0]
-    while True:
+    # Maybe LANG is C and lang is None?
+    while lang is not None:
         try:
             path = 'locale/{}.mo'.format(lang)
+            print(path)
             with resource_stream('pastetray', path) as fp:
                 return gettext.GNUTranslations(fp)
         except OSError:
-            if '_' not in lang:
+            if '_' in lang:
+                # Remove the last part and keep going.
+                lang = lang.rpartition('_')[0]
+            else:
                 # Give up.
-                return gettext.NullTranslations()
-            # Remove the last part and keep going.
-            lang = lang.rpartition('_')[0]
-
+                lang = None
+    return gettext.NullTranslations()
 
 _ = _get_translation().gettext
 
