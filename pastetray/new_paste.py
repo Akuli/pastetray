@@ -48,7 +48,7 @@ class _Paster(Gtk.Builder):
         get('textview').set_tooltip_text(_("The content of this paste"))
         get('pastebin_label').set_label(_("Pastebin:"))
         get('syntax_label').set_label(_("Syntax highlighting:"))
-        get('username_label').set_label(_("Your name:"))
+        get('username_label').set_label(_("Your name or nick:"))
         get('username_label').set_halign(Gtk.Align.START)
         get('expiry_label').set_label(_("Expiry in days:"))
         self._apply_preferences()
