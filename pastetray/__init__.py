@@ -19,7 +19,11 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""Set up things and provide information about PasteTray."""
+"""Simple program for using online pastebins.
+
+This file sets up many things, such as internationalization, GTK+,
+threading and Ctrl+C interrupting.
+"""
 
 import gettext
 import locale
