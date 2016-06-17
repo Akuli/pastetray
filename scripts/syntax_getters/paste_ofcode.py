@@ -1,6 +1,8 @@
 """Write information about paste.ofcode.org as json to stdout."""
 
 import html.parser
+import json
+import sys
 
 import requests
 
@@ -34,9 +36,5 @@ class PasteOfCodeParser(html.parser.HTMLParser):
 parser = PasteOfCodeParser()
 data = parser.parse(requests.get('http://paste.ofcode.org/').text)
 
-print('{')
-for key in sorted(data.keys(), key=str.lower):
-    print('    ', end='')
-    print(repr(key), repr(data[key]), sep=': ', end=',')
-    print()
-print('}')
+json.dump(data, sys.stdout, indent=4)
+print()

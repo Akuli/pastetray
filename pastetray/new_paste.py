@@ -144,7 +144,7 @@ class _Paster(Gtk.Builder):
             for choice in choices:
                 combo.append_text(choice)
             # TODO: Get this from settings.
-            combo.set_active(choices.index(pastebin.default_syntax))
+            combo.set_active(choices.index(pastebin.syntax_default))
 
         combo = self.get_object('expiry_combo')
         combo.remove_all()
