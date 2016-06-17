@@ -49,6 +49,9 @@ def load():
             continue
         modulename = 'pastetray.pastebins.' + name
         module = importlib.import_module(modulename)
+        if module.name in (pb.name for pb in pastebins):
+            raise Exception("there are two pastebins named {!r}"
+                            .format(module.name))
         pastebins.append(module)
 
     recent_pastes.clear()
