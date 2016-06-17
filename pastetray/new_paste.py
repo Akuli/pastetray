@@ -30,6 +30,8 @@ from pkg_resources import resource_string
 
 from pastetray import _, backend, trayicon
 
+_pasters = []
+
 
 class _Paster(Gtk.Builder):
     """Make a new paste."""
@@ -243,9 +245,11 @@ class _Paster(Gtk.Builder):
         """Destroy the window."""
         # TODO: Save new default paste settings here?
         self.get_object('window').destroy()
+        _pasters.remove(self)
 
 
 def new_paste(widget=None):
     """Make a new paste."""
     paster = _Paster()
     paster.get_object('window').show_all()
+    _pasters.append(paster)
