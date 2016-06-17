@@ -75,23 +75,26 @@ class _Paster(Gtk.Builder):
         buf = self.get_object('textview').get_buffer()
         return buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
 
-    def _get_pastebin_name(self):
-        """Return the name of the selected pastebin."""
-        combo = self.get_object('pastebin_combo')
-        return combo.get_active_text()
-
     def _get_pastebin(self):
         """Return currently selected pastebin."""
-        name = self._get_pastebin_name()
+        combo = self.get_object('pastebin_combo')
+        pastebin_name = combo.get_active_text()
+
         for pastebin in backend.pastebins:
-            if pastebin.name == name:
+            if pastebin.name == pastebin_name:
                 return pastebin
         raise LookupError("no pastebin named {!r}".format(name))
 
-    def _get_syntax(self):
-        """Return currently selected syntax."""
+    def _get_syntax(self, pastebin):
+        """Return currently selected syntax.
+
+        The value returned by this function can be passed directly to
+        pastebin.paste().
+        """
+        pastebin = self._get_pastebin()
         combo = self.get_object('syntax_combo')
-        return combo.get_active_text()
+        syntax_name = combo.get_active_text()
+        return pastebin.syntax_choices[syntax_name]
 
     def _get_username(self):
         """Return currently entered username."""
@@ -107,13 +110,15 @@ class _Paster(Gtk.Builder):
         """Make most of the widgets sensitive."""
         pastebin = self._get_pastebin()
 
-        insensitives = 'progressbar',
-        if not getattr(pastebin, 'use_syntax_colors', False):
-            insensitives += 'syntax_label', 'syntax_combo'
-        if not getattr(pastebin, 'use_title', False):
-            insensitives += 'title_entry',
-        if not getattr(pastebin, 'use_username', False):
-            insensitives += 'username_label', 'username_entry'
+        insensitives = ['progressbar']
+        if 'syntax' not in pastebin.paste_args:
+            insensitives.append('syntax_label')
+            insensitives.append('syntax_combo')
+        if 'title' not in pastebin.paste_args:
+            insensitives.append('title_entry')
+        if 'username' not in pastebin.paste_args:
+            insensitives.append('username_label')
+            insensitives.append('username_entry')
 
         insensitives = [self.get_object(i) for i in insensitives]
         for obj in self.get_objects():
@@ -129,7 +134,7 @@ class _Paster(Gtk.Builder):
     def _on_pastebin_changed(self, pastebin_combo):
         pastebin = self._get_pastebin()
 
-        if getattr(pastebin, 'use_syntax_colors', False):
+        if 'syntax' in pastebin.paste_args:
             choices = list(pastebin.syntax_choices.keys())
             choices.sort(key=str.lower)
             combo = self.get_object('syntax_combo')
@@ -145,25 +150,24 @@ class _Paster(Gtk.Builder):
             combo.append_text(str(choice))
         # TODO: Get this from settings.
         combo.set_active(0)
-
         self.get_object('disclaimer_label').set_markup(
             _("Make sure to read <a href='{url}'>your pastebin</a>'s terms "
               "and conditions.").format(url=pastebin.url)
         )
+
         self._make_sensitive()
 
     def _on_paste_clicked(self, button):
         """Run when user clicks the paste button."""
         pastebin = self._get_pastebin()
-
-        kwargs = {'content': self._get_content(),
-                  'expiry_days': self._get_expiry()}
-        if getattr(pastebin, 'use_syntax_colors', False):
-            kwargs['syntax'] = pastebin.syntax_choices[self._get_syntax()]
-        if getattr(pastebin, 'use_title', False):
-            kwargs['title'] = self._get_title()
-        if getattr(pastebin, 'use_username', False):
-            kwargs['username'] = self._get_username()
+        getters = {
+            'content': self._get_content,
+            'expiry_days': self._get_expiry,
+            'syntax': self._get_syntax,
+            'title': self._get_title,
+            'username': self._get_username,
+        }
+        kwargs = {getters[arg]() for arg in pastebin.paste_args}
 
         self._make_insensitive()
 
@@ -177,8 +181,8 @@ class _Paster(Gtk.Builder):
     def _paste_with_pastebin(self, pastebin, kwargs):
         """Make a paste.
 
-        This is executed in another thread, because this does not
-        access GTK+.
+        This is executed in another thread because this does not access
+        GTK+.
         """
         try:
             self._response = str(pastebin.paste(**kwargs))
@@ -190,14 +194,16 @@ class _Paster(Gtk.Builder):
     def _on_timeout(self, pasting_thread):
         """Move the progressbar or show a message.
 
-        This is executed with GLib's timeouts, because this needs to
+        This is executed with GLib's timeouts because this needs to
         access GTK+.
         """
         if pasting_thread.is_alive():
+            # Move the progress bar and run this again.
             self.get_object('progressbar').pulse()
             return True
 
         if self._success:
+            # Success message.
             backend.recent_pastes.appendleft(self._response)
             trayicon.update()
             dialog = Gtk.MessageDialog(
@@ -215,6 +221,7 @@ class _Paster(Gtk.Builder):
             self._destroy()
 
         else:
+            # Failure message.
             dialog = Gtk.MessageDialog(
                 self.get_object('window'), Gtk.DialogFlags.MODAL,
                 Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
@@ -234,7 +241,7 @@ class _Paster(Gtk.Builder):
 
     def _destroy(self, *ign):
         """Destroy the window."""
-        # TODO: Save new default paste settings here.
+        # TODO: Save new default paste settings here?
         self.get_object('window').destroy()
 
 

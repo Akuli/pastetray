@@ -31,8 +31,6 @@ from pastetray import USER_AGENT
 
 name = 'Ghostbin'
 url = 'https://ghostbin.com/'
-use_syntax_colors = True
-use_title = True
 expiry_days = [1, 7, 30, 365]
 default_syntax = 'Plain Text'
 syntax_choices = {
@@ -382,6 +380,8 @@ syntax_choices = {
     'YAML+Jinja': 'yaml+jinja',
     'Zephir': 'zephir',
 }
+
+paste_args = ['content', 'expiry_days', 'syntax', 'title']
 
 
 def paste(content, expiry_days, syntax, title):

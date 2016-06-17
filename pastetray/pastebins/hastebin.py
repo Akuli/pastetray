@@ -31,6 +31,8 @@ name = 'hastebin'
 url = 'http://hastebin.com/'
 expiry_days = [30]
 
+paste_args = ['content', 'expiry_days']
+
 
 def paste(content, expiry_days):
     """Make a paste to hastebin.com."""

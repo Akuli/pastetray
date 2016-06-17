@@ -31,7 +31,6 @@ from pastetray import USER_AGENT
 
 name = 'Paste ofCode'
 url = 'http://paste.ofcode.org/'
-use_syntax_colors = True
 expiry_days = [7]
 default_syntax = 'Text only'
 syntax_choices = {
@@ -392,6 +391,8 @@ syntax_choices = {
     'YAML+Jinja': 'yaml+jinja',
     'Zephir': 'zephir',
 }
+
+paste_args = ['content', 'expiry_days', 'syntax']
 
 
 def paste(content, expiry_days, syntax):

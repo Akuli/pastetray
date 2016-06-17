@@ -26,9 +26,6 @@ from pastetray import USER_AGENT
 
 name = 'dpaste'
 url = 'http://dpaste.com/'
-use_syntax_colors = True
-use_title = True
-use_username = True
 expiry_days = [1, 7, 30, 365]
 default_syntax = 'Plain text'
 syntax_choices = {
@@ -138,6 +135,8 @@ syntax_choices = {
     'XSLT': 'xslt',
     'YAML': 'yaml',
 }
+
+paste_args = ['content', 'expiry_days', 'syntax', 'title', 'username']
 
 
 def paste(content, expiry_days, syntax, title, username):
