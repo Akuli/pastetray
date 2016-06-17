@@ -167,7 +167,7 @@ class _Paster(Gtk.Builder):
             'title': self._get_title,
             'username': self._get_username,
         }
-        kwargs = {getters[arg]() for arg in pastebin.paste_args}
+        kwargs = {arg: getters[arg]() for arg in pastebin.paste_args}
 
         self._make_insensitive()
 
