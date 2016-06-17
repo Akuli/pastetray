@@ -116,9 +116,11 @@ def _menuitems():
         (Gtk.STOCK_QUIT, _("Quit"), Gtk.main_quit),
     ]
 
+    # Check if Gtk.ImageMenuItem is deprecated.
+    not_deprecated = hasattr(Gtk, 'ImageMenuItem')
+
     for stock, label, command in data:
-        if hasattr(Gtk, 'ImageMenuItem'):
-            # Gtk.ImageMenuItem is not deprecated.
+        if not_deprecated
             image = Gtk.Image.new_from_icon_name(stock, Gtk.IconSize.MENU)
             item = Gtk.ImageMenuItem(label)
             item.set_image(image)
