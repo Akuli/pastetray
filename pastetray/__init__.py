@@ -38,7 +38,6 @@ def _get_translation():
     while lang is not None:
         try:
             path = 'locale/{}.mo'.format(lang)
-            print(path)
             with resource_stream('pastetray', path) as fp:
                 return gettext.GNUTranslations(fp)
         except OSError:
@@ -51,10 +50,8 @@ def _get_translation():
     return gettext.NullTranslations()
 
 _ = _get_translation().gettext
-
 gi.require_version('Gtk', '3.0')
 GObject.threads_init()
-
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
