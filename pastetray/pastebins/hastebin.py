@@ -22,7 +22,8 @@
 """This is a hastebin file for PasteTray.
 
 Thanks to SquishyStrawberry <https://github.com/SquishyStrawberry/> for
-making the original pasting script. This file is my (Akuli's) version of it.
+making the original pasting script. This file is my (Akuli's) version of
+it.
 """
 
 import requests
