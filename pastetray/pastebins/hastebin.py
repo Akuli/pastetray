@@ -33,7 +33,7 @@ expiry_days = [30]
 
 
 def paste(content, expiry_days):
-    """Make a paste to dpaste.com."""
+    """Make a paste to hastebin.com."""
     response = requests.post('http://hastebin.com/documents/', data=content)
     response.raise_for_status()
     return 'http://hastebin.com/' + response.json()['key']
