@@ -28,7 +28,7 @@ import sys
 import filelock
 from gi.repository import Gtk
 
-from pastetray import backend, filepaths, preferences, trayicon
+from pastetray import _, backend, filepaths, preferences, trayicon
 
 
 def main(args=None):

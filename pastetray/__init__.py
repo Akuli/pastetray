@@ -38,7 +38,7 @@ from pkg_resources import resource_stream
 def _get_translation():
     """Return a gettext translation."""
     lang = locale.getdefaultlocale()[0]
-    # Maybe LANG is C and lang is None?
+    # Maybe $LANG is C and lang is None?
     while lang is not None:
         try:
             path = 'locale/{}.mo'.format(lang)
@@ -68,8 +68,7 @@ TRANSLATORS = {
 
 # General information. Only string literals are passed to _() to make
 # sure pygettext will work properly.
-SHORT_DESC = "a simple application for using online pastebins"
-SHORT_DESC_TRANS = _("a simple application for using online pastebins")
+SHORT_DESC = _("simple application for using online pastebins")
 LONG_DESC = _("This program displays a paste icon in the system tray. "
               "The tray icon can be clicked and new pastes to online "
               "pastebins can be easily made.")

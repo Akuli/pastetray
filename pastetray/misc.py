@@ -23,17 +23,6 @@
 
 import contextlib
 import functools
-import os
-import tempfile
-from urllib.request import pathname2url
-import webbrowser
-
-from gi.repository import Gtk, GdkPixbuf
-from pkg_resources import (resource_filename, resource_stream,
-                           resource_string)
-
-import pastetray
-from pastetray import filepaths
 
 
 def ignore_first(func):
@@ -56,49 +45,3 @@ def disconnected(obj, signal, func, *user_data):
     obj.disconnect_by_func(func)
     yield
     obj.connect(signal, func, *user_data)
-
-
-def show_help(widget=None):
-    """Open the help page in the web browser."""
-    try:
-        filename = resource_filename('pastetray', 'help.html')
-    except NotImplementedError:
-        # Running from a zipfile.
-        filename = os.path.join(tempfile.gettempdir(), 'pastetray-help.html')
-        with resource_stream('pastetray', 'help.html') as src:
-            with open(filename, 'wb') as dst:
-                shutil.copyfileobj(src, dst)
-
-    url = 'file://' + pathname2url(filename)
-
-    # On X.Org, webbrowser.open() seems to use xdg-open by default
-    # instead of x-www-browser, so HTML files don't always open in a WWW
-    # browser. That's why x-www-browser is used when possible.
-    try:
-        webbrowser.get('x-www-browser').open(url)
-    except webbrowser.Error:
-        webbrowser.open(url)
-
-
-def show_about(widget=None):
-    """Display an about dialog."""
-    license = resource_string('pastetray', 'LICENSE')
-    logo = Gtk.IconTheme.get_default().lookup_icon(
-        Gtk.STOCK_PASTE, 128,
-        Gtk.IconLookupFlags.NO_SVG,
-    )
-
-    dialog = Gtk.AboutDialog()
-    dialog.set_program_name("PasteTray")
-    dialog.set_version(pastetray.VERSION)
-    dialog.set_comments(pastetray.SHORT_DESC[0].upper() +
-                        pastetray.SHORT_DESC[1:] + ".")
-    dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(logo.get_filename()))
-    dialog.set_license(license.decode('utf-8'))
-    dialog.set_resizable(True)     # The license is a bit long.
-    dialog.set_authors(pastetray.AUTHORS)
-    dialog.set_translator_credits(
-        '\n'.join(': '.join(item) for item in pastetray.TRANSLATORS.items())
-    )
-    dialog.run()
-    dialog.destroy()

@@ -85,7 +85,7 @@ class _Paster(Gtk.Builder):
         for pastebin in backend.pastebins:
             if pastebin.name == pastebin_name:
                 return pastebin
-        raise LookupError("no pastebin named {!r}".format(name))
+        raise LookupError("no pastebin named {!r}".format(pastebin_name))
 
     def _get_syntax(self, pastebin):
         """Return currently selected syntax.
