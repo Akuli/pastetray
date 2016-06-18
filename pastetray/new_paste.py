@@ -164,7 +164,7 @@ class _Paster(Gtk.Builder):
         pastebin = self._get_pastebin()
         getters = {
             'content': self._get_content,
-            'expiry_days': self._get_expiry,
+            'expiry': self._get_expiry,
             'syntax': self._get_syntax,
             'title': self._get_title,
             'username': self._get_username,

@@ -381,16 +381,16 @@ syntax_choices = {
     "dg": "dg"
 }
 
-paste_args = ['content', 'expiry_days', 'syntax', 'title']
+paste_args = ['content', 'expiry', 'syntax', 'title']
 
 
-def paste(content, expiry_days, syntax, title):
+def paste(content, expiry, syntax, title):
     """Make a paste to dpaste.com."""
     response = requests.post(
         'https://ghostbin.com/paste/new',
         data={'text': content},
         params={
-            'expire': str(expiry_days) + 'd',
+            'expire': str(expiry) + 'd',
             'lang': syntax,
             'title': title,
         },

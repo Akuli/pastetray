@@ -32,10 +32,10 @@ name = 'hastebin'
 url = 'http://hastebin.com/'
 expiry_days = [30]
 
-paste_args = ['content', 'expiry_days']
+paste_args = ['content']
 
 
-def paste(content, expiry_days):
+def paste(content):
     """Make a paste to hastebin.com."""
     response = requests.post('http://hastebin.com/documents/', data=content)
     response.raise_for_status()

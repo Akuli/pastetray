@@ -136,10 +136,10 @@ syntax_choices = {
     "D": "d"
 }
 
-paste_args = ['content', 'expiry_days', 'syntax', 'title', 'username']
+paste_args = ['content', 'expiry', 'syntax', 'title', 'username']
 
 
-def paste(content, expiry_days, syntax, title, username):
+def paste(content, expiry, syntax, title, username):
     """Make a paste to dpaste.com."""
     response = requests.post(
         'http://dpaste.com/api/v2/',
@@ -148,7 +148,7 @@ def paste(content, expiry_days, syntax, title, username):
             'syntax': syntax,
             'title': title,
             'poster': username,
-            'expiry_days': expiry_days,
+            'expiry_days': expiry,
         },
         headers={'User-Agent': USER_AGENT},
     )

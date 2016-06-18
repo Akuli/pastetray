@@ -392,10 +392,10 @@ syntax_choices = {
     "Racket": "racket"
 }
 
-paste_args = ['content', 'expiry_days', 'syntax']
+paste_args = ['content', 'syntax']
 
 
-def paste(content, expiry_days, syntax):
+def paste(content, syntax):
     """Make a paste to paste.ofcode.org."""
     response = requests.post(
         'http://paste.ofcode.org/',
