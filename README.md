@@ -218,16 +218,6 @@ Usually you can use variables with UPPERCASE names. In this case we use
 `USER_AGENT`, which is equivalent to `'PasteTray/' + VERSION`.
 
 ```py
-use_syntax_colors = True
-use_title = True
-use_username = True
-```
-
-These mean that dpaste supports syntax highlighting, paste titles and
-usernames. These are `False` by default like they were in the hastebin
-script.
-
-```py
 syntax_default = 'Plain text'
 syntax_choices = {
     # This was generated with scripts/syntax_getters/dpaste.py in the
