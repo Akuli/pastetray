@@ -41,11 +41,13 @@ it tells PIP that pastetray is a directory.
 Then you can run it like this. A tray icon should appear in your system
 tray.
 
-    .local/bin/pastetray &
+```none
+.local/bin/pastetray &
+```
 
 Uninstalling is easy:
 
-    $ python3 -m pip uninstall pastetray
+    python3 -m pip uninstall pastetray
 
 I'll make distribution packages (at least a Debian package) of PasteTray
 later to make installing and running it easier.
@@ -57,8 +59,9 @@ these people for helping me with it:
 
 - [SquishyStrawberry](https://github.com/SquishyStrawberry/) wrote the
 original versions of Paste ofCode and hastebin scripts.
-- [Chisight](https://github.com/Chisight/) wrote the original ghostbin
-pasting script. His version of it is available in his
+- [Chisight](https://github.com/Chisight/) came up with the idea of
+making a pasting application and wrote the original ghostbin pasting
+script. His version of it is available in his
 [ghostbinit repository](https://github.com/Chisight/ghostbinit).
 
 **********
@@ -94,6 +97,8 @@ name = 'hastebin'
 url = 'http://hastebin.com/'
 expiry_days = [30]
 
+paste_args = ['content', 'expiry_days']
+
 
 def paste(content, expiry_days):
     """Make a paste to hastebin.com."""
@@ -126,20 +131,22 @@ case, one month is the only expiration hastebin allows so we set
 `expiry_days` to a list with nothing but 30 in it.
 
 ```py
-def paste(content, expiry_days):
+paste_args = ['content']
+
+
+def paste(content):
     """Make a paste to hastebin.com."""
     response = requests.post('http://hastebin.com/documents/', data=content)
     response.raise_for_status()
     return 'http://hastebin.com/' + response.json()['key']
 ```
 
-This function must be named `paste` and it should make a paste, raise an
-exception if it failed and return the URL the new paste ended up in,
-which is exactly what this example is doing. The arguments (in this
-case, `content` and `expiry_days`) are given as keyword arguments, so
-`def paste(expiry_days, content)` would work just fine but
-`def paste(expiration_days, content)` wouldn't. The `expiry_days`
-parameter is not used because hastebin pastes always expire in 30 days.
+There must be a function called `paste` and it should make a paste,
+raise an exception if it fails and return the URL the new paste ended up
+in, which is exactly what this example is doing. The arguments (in this
+case, only `content`) are given as keyword arguments, so
+`def paste(content_to_paste)` would not work. You should also add a list
+of arguments to `paste_args`.
 
 #### Example: dpaste script
 
@@ -152,21 +159,22 @@ from pastetray import USER_AGENT
 
 name = 'dpaste'
 url = 'http://dpaste.com/'
-use_syntax_colors = True
-use_title = True
-use_username = True
 expiry_days = [1, 7, 30, 365]
-default_syntax = 'Plain text'
+syntax_default = 'Plain text'
 syntax_choices = {
     # This was generated with scripts/syntax_getters/dpaste.py in the
     # PasteTray source package.
-    'Ada': 'ada',
-    'Apache config': 'apacheconf',
-    # (many more lines)
+    "RHTML": "rhtml",
+    "Io": "io",
+    # (more lines)
+    "Plain text": "text",
+    # (more lines)
 }
 
+paste_args = ['content', 'expiry', 'syntax', 'title', 'username']
 
-def paste(content, expiry_days, syntax, title, username):
+
+def paste(content, expiry, syntax, title, username):
     """Make a paste to dpaste.com."""
     response = requests.post(
         'http://dpaste.com/api/v2/',
@@ -175,7 +183,7 @@ def paste(content, expiry_days, syntax, title, username):
             'syntax': syntax,
             'title': title,
             'poster': username,
-            'expiry_days': expiry_days,
+            'expiry_days': expiry,
         },
         headers={'User-Agent': USER_AGENT},
     )
@@ -220,31 +228,34 @@ usernames. These are `False` by default like they were in the hastebin
 script.
 
 ```py
-default_syntax = 'Plain text'
+syntax_default = 'Plain text'
 syntax_choices = {
     # This was generated with scripts/syntax_getters/dpaste.py in the
     # PasteTray source package.
-    'Ada': 'ada',
-    'Apache config': 'apacheconf',
-    # ...
-    'Plain text': 'text',
-    # ...
+    "RHTML": "rhtml",
+    "Io": "io",
+    # (more lines)
+    "Plain text": "text",
+    # (more lines)
 }
 ```
 
-You need to have these variables defined if `use_syntax_colors` is
-`True`. `syntax_choices` is a dictionary of possible syntax
-highlightings, and its keys will be the displayed names of the
-highlightings and one of the values will be given to the paste function.
-`default_syntax` is the key that will be selected by default, you should
-set it to your pastebin's equivalent of plain text.
+dpaste supports syntax highlighting, so it needs a default syntax and a
+dictionary of possible syntax choices. In `syntax_choices`, the keys
+will be the displayed names of the syntax highlightings and one of the
+values will be given to the paste function. `default_syntax` is one of
+`syntax_choices` keys and it will be selected by default. You should set
+it to the pastebin's equivalent of plain text.
 
 You don't have to copy-paste all syntax choices manually. I recommend
 writing a script to download the syntax choice list for you. See
 `scripts/syntax_getters` for examples.
 
 ```py
-def paste(content, expiry_days, syntax, title, username):
+paste_args = ['content', 'expiry', 'syntax', 'title', 'username']
+
+
+def paste(content, expiry, syntax, title, username):
     """Make a paste to dpaste.com."""
     response = requests.post(
         'http://dpaste.com/api/v2/',
@@ -253,7 +264,7 @@ def paste(content, expiry_days, syntax, title, username):
             'syntax': syntax,
             'title': title,
             'poster': username,
-            'expiry_days': expiry_days,
+            'expiry_days': expiry,
         },
         headers={'User-Agent': USER_AGENT},
     )
@@ -261,10 +272,9 @@ def paste(content, expiry_days, syntax, title, username):
     return response.text.strip()
 ```
 
-The paste function works much like before, but now we have three new
-parameters, which are `syntax`, `title` and `username`. That's because
-we set `use_syntax_colors`, `use_title` and `use_username` to `True`
-earlier. `syntax` will be a value from `syntax_choices`, and `title` and
+The paste function works much like before, but now we have more
+paste_args. `expiry` will be an element of the `expiry_days` list,
+`syntax` will be a value from `syntax_choices` and `title` and
 `username` will be strings the user has entered.
 
 #### Sharing your pastebin script
