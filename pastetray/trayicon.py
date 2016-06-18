@@ -24,7 +24,6 @@
 This file also contains the menuitems and some of the commands they run.
 """
 
-import os
 import shutil
 import tempfile
 from urllib.request import pathname2url
@@ -34,7 +33,7 @@ from gi.repository import Gtk, GdkPixbuf
 from pkg_resources import resource_filename, resource_stream, resource_string
 
 import pastetray
-from pastetray import (_, backend, misc, new_paste, preference_editor,
+from pastetray import (_, backend, new_paste, preference_editor,
                        trayicon_backend)
 
 
@@ -120,7 +119,7 @@ def _menuitems():
     not_deprecated = hasattr(Gtk, 'ImageMenuItem')
 
     for stock, label, command in data:
-        if not_deprecated
+        if not_deprecated:
             image = Gtk.Image.new_from_icon_name(stock, Gtk.IconSize.MENU)
             item = Gtk.ImageMenuItem(label)
             item.set_image(image)
