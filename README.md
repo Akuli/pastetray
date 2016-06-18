@@ -233,7 +233,7 @@ syntax_choices = {
 dpaste supports syntax highlighting, so it needs a default syntax and a
 dictionary of possible syntax choices. In `syntax_choices`, the keys
 will be the displayed names of the syntax highlightings and one of the
-values will be given to the paste function. `default_syntax` is one of
+values will be given to the paste function. `syntax_default` is one of
 `syntax_choices` keys and it will be selected by default. You should set
 it to the pastebin's equivalent of plain text.
 
