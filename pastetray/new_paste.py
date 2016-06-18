@@ -87,7 +87,7 @@ class _Paster(Gtk.Builder):
                 return pastebin
         raise LookupError("no pastebin named {!r}".format(pastebin_name))
 
-    def _get_syntax(self, pastebin):
+    def _get_syntax(self):
         """Return currently selected syntax.
 
         The value returned by this function can be passed directly to
