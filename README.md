@@ -6,7 +6,7 @@ use an online pastebin. Just paste your text there, click the paste
 button and share the link. Or better yet, use an online pastebin with
 PasteTray. This is especially useful for programmers.
 
-![PasteTray screenshot](pastetray/screenshot.png "PasteTray in action.")
+![PasteTray in action.](pastetray/doc/screenshot.png)
 
 These pastebins are supported by default. You can also use them without
 PasteTray. Just click the link.
