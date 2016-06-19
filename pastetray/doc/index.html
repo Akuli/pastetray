@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<h1>PasteTray</h1>
+<p>PasteTray is a tool for using online pastebins. If you have a lot of
+text to send to somebody and you don't want to send it in a file you can
+use an online pastebin. Just paste your text there, click the paste
+button and share the link. Or better yet, use an online pastebin with
+PasteTray. This is especially useful for programmers.</p>
+<p><img alt="PasteTray in action." src="screenshot.png" /></p>
+<p>These pastebins are supported by default. You can also use them without
+PasteTray. Just click the link.</p>
+<ul>
+<li><a href="http://dpaste.com/">dpaste</a></li>
+<li><a href="https://ghostbin.com/">Ghostbin</a></li>
+<li><a href="http://hastebin.com/">hastebin</a></li>
+<li><a href="http://paste.ofcode.org/">Paste ofCode</a></li>
+</ul>
+<p><a href="writing_pastebins.html">Writing custom pastebin scripts in Python</a> is
+also possible.</p>
+<h2>Downloading, running and installing</h2>
+<p>To run PasteTray, you need to install gi with GTK+ 3, Python 3 with PIP
+and git if you don't already have them installed. You can also install
+AppIndicator3 for gi if you want to have an indicator instead of a tray
+icon. Most GNU/Linux distributions come with a lot of these installed,
+and you can make sure everything is installed on Debian-based
+distributions (such Ubuntu and Linux Mint) by running this on a
+terminal.</p>
+<div class="codehilite"><pre><span></span>sudo apt-get install git python3-{gi,pip} gir1.2-{gtk-3.0,appindicator3-0.1}
+</pre></div>
+
+
+<p>When you have everything installed you can download and install
+PasteTray. This will install it user-wide, so everything will be inside
+your home directory. The <code>/</code> in the end of the PIP command is important,
+it tells PIP that pastetray is a directory.</p>
+<div class="codehilite"><pre><span></span>git clone https://github.com/Akuli/pastetray
+python3 -m pip install --user pastetray/
+</pre></div>
+
+
+<p>Then you can run it like this. A tray icon should appear in your system
+tray.</p>
+<div class="codehilite"><pre><span></span>.local/bin/pastetray <span class="p">&amp;</span>
+</pre></div>
+
+
+<p>Uninstalling is easy:</p>
+<div class="codehilite"><pre><span></span>python3 -m pip uninstall pastetray
+</pre></div>
+
+
+<p>I'll make distribution packages (at least a Debian package) of PasteTray
+later to make installing and running it easier.</p>
+<h2>License</h2>
+<p>PasteTray comes with no warranty. See <a href="pastetray/LICENSE">LICENSE</a>.</p>
+<h2>Authors</h2>
+<p>I'm Akuli and I have written most of PasteTray, but I want to thank
+these people for helping me with it:</p>
+<ul>
+<li><a href="https://github.com/SquishyStrawberry/">SquishyStrawberry</a> wrote the
+original versions of Paste ofCode and hastebin scripts.</li>
+<li><a href="https://github.com/Chisight/">Chisight</a> came up with the idea of
+making a pasting application and wrote the original ghostbin pasting
+script. His version of it is available in his
+<a href="https://github.com/Chisight/ghostbinit">ghostbinit repository</a>.</li>
+</ul>
+</body>
+</html>

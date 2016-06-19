@@ -16,9 +16,10 @@ PasteTray. Just click the link.
 - [hastebin](http://hastebin.com/)
 - [Paste ofCode](http://paste.ofcode.org/)
 
-Writing custom pastebin scripts in Python is also possible.
+[Writing custom pastebin scripts in Python](writing_pastebins.md) is
+also possible.
 
-### Downloading, running and installing
+## Downloading, running and installing
 
 To run PasteTray, you need to install gi with GTK+ 3, Python 3 with PIP
 and git if you don't already have them installed. You can also install
@@ -41,7 +42,7 @@ it tells PIP that pastetray is a directory.
 Then you can run it like this. A tray icon should appear in your system
 tray.
 
-```none
+```
 .local/bin/pastetray &
 ```
 
@@ -52,11 +53,11 @@ Uninstalling is easy:
 I'll make distribution packages (at least a Debian package) of PasteTray
 later to make installing and running it easier.
 
-### License
+## License
 
 PasteTray comes with no warranty. See [LICENSE](pastetray/LICENSE).
 
-### Authors
+## Authors
 
 I'm Akuli and I have written most of PasteTray, but I want to thank
 these people for helping me with it:

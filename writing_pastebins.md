@@ -1,4 +1,4 @@
-## Advanced PasteTray usage: Writing custom pastebin scripts
+# Advanced PasteTray usage: Custom pastebin scripts
 
 If PasteTray doesn't support your favorite pastebin by default and you
 have some experience with programming in Python you can write a
@@ -18,7 +18,7 @@ prompt with PasteTray installed:
 In this case, your pastebin script should be in `/some/path`. PasteTray
 should find your pastebin script automatically when it starts.
 
-#### Example: hastebin script
+## Example: hastebin script
 
 The hastebin script in `pastetray/pastebins/hastebin.py` is one of the
 shortest pastebin scripts PasteTray comes with.
@@ -81,7 +81,7 @@ case, only `content`) are given as keyword arguments, so
 `def paste(content_to_paste)` would not work. You should also add a list
 of arguments to `paste_args`.
 
-#### Example: dpaste script
+## Example: dpaste script
 
 The dpaste script in `pastetray/pastebins/dpaste.py` uses most of the
 features available in PasteTray's pastebin scripts.

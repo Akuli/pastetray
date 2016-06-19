@@ -76,7 +76,7 @@ setup(
     zip_safe=True,
     install_requires=pastetray.PIP_DEPENDS,
     packages=['pastetray', 'pastetray.pastebins'],
-    package_data={'pastetray': ['LICENSE', '*.conf', '*.html',
-                                '*.glade', 'locale/*.mo']},
+    package_data={'pastetray': ['LICENSE', 'default_settings.conf',
+                                '*.glade', 'locale/*.mo', 'doc/*']},
     entry_points={'gui_scripts': ['pastetray = pastetray.__main__:main']},
 )

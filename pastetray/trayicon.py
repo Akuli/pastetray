@@ -24,13 +24,15 @@
 This file also contains the menuitems and some of the commands they run.
 """
 
+import os
 import shutil
 import tempfile
 from urllib.request import pathname2url
 import webbrowser
 
 from gi.repository import Gtk, GdkPixbuf
-from pkg_resources import resource_filename, resource_stream, resource_string
+from pkg_resources import (resource_filename, resource_listdir,
+                           resource_stream, resource_string)
 
 import pastetray
 from pastetray import (_, backend, new_paste, preference_editor,
@@ -57,19 +59,36 @@ def clear_recent_pastes(widget=None):
 def show_help(widget=None):
     """Open the help page in the web browser."""
     try:
-        filename = resource_filename('pastetray', 'help.html')
+        filename = resource_filename('pastetray', 'doc/index.html')
     except NotImplementedError:
-        # Running from a zipfile.
-        with resource_stream('pastetray', 'help.html') as src:
-            with tempfile.NamedTemporaryFile('wb') as dst:
-                filename = dst.name
-                shutil.copyfileobj(src, dst)
+        # Running from a zipfile. The whole doc directory needs to be
+        # extracted.
+        tempdir = os.path.join(tempfile.gettempdir(), 'pastetray-doc')
+        if not os.path.isdir(tempdir):
+            os.mkdir(tempdir)
 
-    url = 'file://' + pathname2url(filename)
+        for fname in resource_listdir('pastetray', 'doc'):
+            if not fname:
+                # Sometimes the list returned by resource_listdir
+                # contains empty strings for some reason.
+                continue
+
+            dstfile = os.path.join(tempdir, fname)
+            if os.path.isfile(dstfile):
+                # The help has already been viewed and there's no need
+                # to rewrite the file.
+                continue
+
+            with resource_stream('pastetray', 'doc/' + i) as src:
+                with open(dstfile, 'wb') as dst:
+                    shutil.copyfileobj(src, dst)
+
+        filename = os.path.join(tempdir, 'index.html')
 
     # On X.Org, webbrowser.open() seems to use xdg-open by default
     # instead of x-www-browser, so HTML files don't always open in a WWW
     # browser. That's why x-www-browser is used when possible.
+    url = 'file://' + pathname2url(filename)
     try:
         webbrowser.get('x-www-browser').open(url)
     except webbrowser.Error:

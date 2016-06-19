@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<h1>Advanced PasteTray usage: Custom pastebin scripts</h1>
+<p>If PasteTray doesn't support your favorite pastebin by default and you
+have some experience with programming in Python you can write a
+PasteTray plugin.</p>
+<p>Add your pastebin script to the same directory with other pastebin
+scripts. To find out where it is, run something like this on a Python
+prompt with PasteTray installed:</p>
+<div class="codehilite"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pastetray.pastebins</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pastetray</span><span class="o">.</span><span class="n">pastebins</span>
+<span class="o">&lt;</span><span class="n">module</span> <span class="s1">&#39;pastetray.pastebins&#39;</span> <span class="kn">from</span> <span class="s1">&#39;/some/path/__init__.py&#39;</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span>
+</pre></div>
+
+
+<p>In this case, your pastebin script should be in <code>/some/path</code>. PasteTray
+should find your pastebin script automatically when it starts.</p>
+<h2>Example: hastebin script</h2>
+<p>The hastebin script in <code>pastetray/pastebins/hastebin.py</code> is one of the
+shortest pastebin scripts PasteTray comes with.</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;hastebin&#39;</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://hastebin.com/&#39;</span>
+<span class="n">expiry_days</span> <span class="o">=</span> <span class="p">[</span><span class="mi">30</span><span class="p">]</span>
+
+<span class="n">paste_args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a paste to hastebin.com.&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;http://hastebin.com/documents/&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s1">&#39;http://hastebin.com/&#39;</span> <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<p>Let's go through it and see how it works.</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+</pre></div>
+
+
+<p>The pastebin script is executed in Python with import, so you are free
+to do anything you want in it. In this case, we're going to use requests
+to do a HTTP post later, so we'll import it.</p>
+<div class="codehilite"><pre><span></span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;hastebin&#39;</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://hastebin.com/&#39;</span>
+<span class="n">expiry_days</span> <span class="o">=</span> <span class="p">[</span><span class="mi">30</span><span class="p">]</span>
+</pre></div>
+
+
+<p>All PasteTray pastebins need a <code>name</code>, a <code>url</code> and an <code>expiry_days</code>. The
+url should be something users can click to open the pastebin's official
+website to make a paste theirselves or read the pastebin's terms and
+conditions, and <code>expiry_days</code> should be a list of integers. In this
+case, one month is the only expiration hastebin allows so we set
+<code>expiry_days</code> to a list with nothing but 30 in it.</p>
+<div class="codehilite"><pre><span></span><span class="n">paste_args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a paste to hastebin.com.&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;http://hastebin.com/documents/&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s1">&#39;http://hastebin.com/&#39;</span> <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<p>There must be a function called <code>paste</code> and it should make a paste,
+raise an exception if it fails and return the URL the new paste ended up
+in, which is exactly what this example is doing. The arguments (in this
+case, only <code>content</code>) are given as keyword arguments, so
+<code>def paste(content_to_paste)</code> would not work. You should also add a list
+of arguments to <code>paste_args</code>.</p>
+<h2>Example: dpaste script</h2>
+<p>The dpaste script in <code>pastetray/pastebins/dpaste.py</code> uses most of the
+features available in PasteTray's pastebin scripts.</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">pastetray</span> <span class="kn">import</span> <span class="n">USER_AGENT</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;dpaste&#39;</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://dpaste.com/&#39;</span>
+<span class="n">expiry_days</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">365</span><span class="p">]</span>
+<span class="n">syntax_default</span> <span class="o">=</span> <span class="s1">&#39;Plain text&#39;</span>
+<span class="n">syntax_choices</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># This was generated with scripts/syntax_getters/dpaste.py in the</span>
+    <span class="c1"># PasteTray source package.</span>
+    <span class="s2">&quot;RHTML&quot;</span><span class="p">:</span> <span class="s2">&quot;rhtml&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Io&quot;</span><span class="p">:</span> <span class="s2">&quot;io&quot;</span><span class="p">,</span>
+    <span class="c1"># (more lines)</span>
+    <span class="s2">&quot;Plain text&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+    <span class="c1"># (more lines)</span>
+<span class="p">}</span>
+
+<span class="n">paste_args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;expiry&#39;</span><span class="p">,</span> <span class="s1">&#39;syntax&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">expiry</span><span class="p">,</span> <span class="n">syntax</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a paste to dpaste.com.&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s1">&#39;http://dpaste.com/api/v2/&#39;</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+            <span class="s1">&#39;syntax&#39;</span><span class="p">:</span> <span class="n">syntax</span><span class="p">,</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+            <span class="s1">&#39;poster&#39;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s1">&#39;expiry_days&#39;</span><span class="p">:</span> <span class="n">expiry</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="n">USER_AGENT</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</pre></div>
+
+
+<p>Many things here are similar with the hastebin script above, so let's go
+through everything new.</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pastetray</span> <span class="kn">import</span> <span class="n">USER_AGENT</span>
+</pre></div>
+
+
+<p>You can import PasteTray just like any other Python module. If you have
+PasteTray installed, you can run Python, import it and check what you
+can use from it:</p>
+<div class="codehilite"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pastetray</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">dir</span><span class="p">(</span><span class="n">pastetray</span><span class="p">)</span>
+<span class="p">[</span><span class="s1">&#39;AUTHORS&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBIAN_DEPENDS&#39;</span><span class="p">,</span> <span class="s1">&#39;GObject&#39;</span><span class="p">,</span> <span class="s1">&#39;KEYWORDS&#39;</span><span class="p">,</span> <span class="s1">&#39;LONG_DESC&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PIP_DEPENDS&#39;</span><span class="p">,</span> <span class="s1">&#39;SHORT_DESC&#39;</span><span class="p">,</span> <span class="s1">&#39;SHORT_DESC_TRANS&#39;</span><span class="p">,</span> <span class="s1">&#39;TRANSLATORS&#39;</span><span class="p">,</span> <span class="s1">&#39;URL&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;USER_AGENT&#39;</span><span class="p">,</span> <span class="s1">&#39;VERSION&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span> <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;__file__&#39;</span><span class="p">,</span> <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__path__&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span> <span class="s1">&#39;__warningregistry__&#39;</span><span class="p">,</span> <span class="s1">&#39;_get_translation&#39;</span><span class="p">,</span> <span class="s1">&#39;gettext&#39;</span><span class="p">,</span> <span class="s1">&#39;gi&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;locale&#39;</span><span class="p">,</span> <span class="s1">&#39;resource_stream&#39;</span><span class="p">,</span> <span class="s1">&#39;signal&#39;</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span>
+</pre></div>
+
+
+<p>Usually you can use variables with UPPERCASE names. In this case we use
+<code>USER_AGENT</code>, which is equivalent to <code>'PasteTray/' + VERSION</code>.</p>
+<div class="codehilite"><pre><span></span><span class="n">syntax_default</span> <span class="o">=</span> <span class="s1">&#39;Plain text&#39;</span>
+<span class="n">syntax_choices</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># This was generated with scripts/syntax_getters/dpaste.py in the</span>
+    <span class="c1"># PasteTray source package.</span>
+    <span class="s2">&quot;RHTML&quot;</span><span class="p">:</span> <span class="s2">&quot;rhtml&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Io&quot;</span><span class="p">:</span> <span class="s2">&quot;io&quot;</span><span class="p">,</span>
+    <span class="c1"># (more lines)</span>
+    <span class="s2">&quot;Plain text&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+    <span class="c1"># (more lines)</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>dpaste supports syntax highlighting, so it needs a default syntax and a
+dictionary of possible syntax choices. In <code>syntax_choices</code>, the keys
+will be the displayed names of the syntax highlightings and one of the
+values will be given to the paste function. <code>syntax_default</code> is one of
+<code>syntax_choices</code> keys and it will be selected by default. You should set
+it to the pastebin's equivalent of plain text.</p>
+<p>You don't have to copy-paste all syntax choices manually. I recommend
+writing a script to download the syntax choice list for you. See
+<code>scripts/syntax_getters</code> for examples.</p>
+<div class="codehilite"><pre><span></span><span class="n">paste_args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;expiry&#39;</span><span class="p">,</span> <span class="s1">&#39;syntax&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">expiry</span><span class="p">,</span> <span class="n">syntax</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a paste to dpaste.com.&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s1">&#39;http://dpaste.com/api/v2/&#39;</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+            <span class="s1">&#39;syntax&#39;</span><span class="p">:</span> <span class="n">syntax</span><span class="p">,</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+            <span class="s1">&#39;poster&#39;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s1">&#39;expiry_days&#39;</span><span class="p">:</span> <span class="n">expiry</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="n">USER_AGENT</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</pre></div>
+
+
+<p>The paste function works much like before, but now we have more
+paste_args. <code>expiry</code> will be an element of the <code>expiry_days</code> list,
+<code>syntax</code> will be a value from <code>syntax_choices</code> and <code>title</code> and
+<code>username</code> will be strings the user has entered.</p>
+<h4>Sharing your pastebin script</h4>
+<p>If you've written a pastebin script for PasteTray you can fork my
+pastetray repository, add your script there and make a pull request. I'd
+be happy to support more pastebins by default, and if I decide to add
+your pastebin script you'll find your name or nick from the author list
+above.</p>
+</body>
+</html>
