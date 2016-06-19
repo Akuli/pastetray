@@ -13,6 +13,7 @@ PasteTray. Just click the link.
 
 - [dpaste](http://dpaste.com/)
 - [Ghostbin](https://ghostbin.com/)
+- [GitHub Gist](https://gist.github.com/)
 - [hastebin](http://hastebin.com/)
 - [Paste ofCode](http://paste.ofcode.org/)
 
