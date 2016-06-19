@@ -202,8 +202,8 @@ paste_args. `expiry` will be an element of the `expiry_days` list,
 
 ## Sharing your pastebin script
 
-If you've written a pastebin script for PasteTray you can fork my
-pastetray repository, add your script there and make a pull request. I'd
-be happy to support more pastebins by default, and if I decide to add
-your pastebin script you'll find your name or nick from the author list
-above.
+If you've written a pastebin script for PasteTray you can fork
+[my pastetray repository](https://github.com/Akuli/pastetray), add your
+script to your fork and make a pull request. I'd be happy to support
+more pastebins by default, and if I decide to add your pastebin script
+you'll find your name or nick from the author list.
