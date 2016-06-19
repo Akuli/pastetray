@@ -121,6 +121,8 @@ class _Paster(Gtk.Builder):
         if 'username' not in pastebin.paste_args:
             insensitives.append('username_label')
             insensitives.append('username_entry')
+        if len(pastebin.expiry_days) == 1:
+            insensitives.append('expiry_combo')
 
         insensitives = [self.get_object(i) for i in insensitives]
         for obj in self.get_objects():
