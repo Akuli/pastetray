@@ -30,15 +30,18 @@ and you can make sure everything is installed on Debian-based
 distributions (such Ubuntu and Linux Mint) by running this on a
 terminal.
 
-    sudo apt-get install git python3-{gi,pip} gir1.2-{gtk-3.0,appindicator3-0.1}
+```
+sudo apt-get install git python3-{gi,pip} gir1.2-{gtk-3.0,appindicator3-0.1}
+```
 
 When you have everything installed you can download and install
 PasteTray. This will install it user-wide, so everything will be inside
 your home directory. The `/` in the end of the PIP command is important,
 it tells PIP that pastetray is a directory.
 
-    git clone https://github.com/Akuli/pastetray
-    python3 -m pip install --user pastetray/
+```
+python3 -m pip install --user git+https://github.com/Akuli/pastetray/
+```
 
 Then you can run it like this. A tray icon should appear in your system
 tray.
@@ -49,7 +52,9 @@ tray.
 
 Uninstalling is easy:
 
-    python3 -m pip uninstall pastetray
+```
+python3 -m pip uninstall pastetray
+```
 
 I'll make distribution packages (at least a Debian package) of PasteTray
 later to make installing and running it easier.
