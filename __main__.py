@@ -21,11 +21,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""A main file to allow distributing this as a zipfile.
-
-You can also run this as a standalone Python script if you don't want
-to use the -m option for some reason.
-"""
+"""A main file to allow distributing this as a zipfile."""
 
 from pastetray.__main__ import main
 
