@@ -21,18 +21,15 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""Make a PasteTray zipfile.
-
-PasteTray's source code should be in the parent directory, and the zip
-will be placed there too.
-"""
+"""Make a PasteTray zipfile."""
 
 import os
 import shutil
 import tempfile
 import zipfile
 
-os.chdir(os.path.pardir)
+here = os.path.dirname(os.path.abspath(__file__))
+os.chdir(os.path.dirname(here))
 
 for root, dirs, files in os.walk(os.path.curdir):
     for d in dirs:
@@ -41,11 +38,14 @@ for root, dirs, files in os.walk(os.path.curdir):
 
 # TODO: Use os.walk and write directly to the final file instead of
 # making a temporary zipfile and copying its content.
-tempzip = os.path.join(tempfile.gettempdir(), 'pastetray-build.zip')
-zipfile.main(['-c', tempzip, 'LICENSE', '__main__.py',
-              'pastetray', 'README.md'])
+tempzip = tempfile.NamedTemporaryFile('rb')
+try:
+    zipfile.main(['-c', tempzip.name, 'LICENSE', '__main__.py',
+                  'pastetray', 'README.md', 'WRITING_PASTEBINS.md'])
+except SystemExit:
+    pass
 
-with open('pastetray.pyz', 'wb') as dst:
-    dst.write(b'#!/usr/bin/env python3\n')
-    with open(tempzip, 'rb') as src:
-        shutil.copyfileobj(src, dst)
+with open('pastetray.pyz', 'wb') as result:
+    result.write(b'#!/usr/bin/env python3\n')
+    with tempzip:
+        shutil.copyfileobj(tempzip, result)
