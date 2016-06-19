@@ -24,6 +24,9 @@
 Thanks to Chisight <https://github.com/Chisight/> for making the
 original pasting script. His version is available in his ghostbinit
 Github repository. This is my (Akuli's) version of it.
+
+The API documentation is here:
+  https://ghostbin.com/paste/p3qcy
 """
 
 import requests
