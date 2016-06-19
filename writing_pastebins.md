@@ -200,7 +200,7 @@ paste_args. `expiry` will be an element of the `expiry_days` list,
 `syntax` will be a value from `syntax_choices` and `title` and
 `username` will be strings the user has entered.
 
-#### Sharing your pastebin script
+## Sharing your pastebin script
 
 If you've written a pastebin script for PasteTray you can fork my
 pastetray repository, add your script there and make a pull request. I'd
