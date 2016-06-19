@@ -43,7 +43,7 @@ class Check:
         if args != (None, None, None):
             if self._custom_msg:
                 sys.exit(self._custom_msg)
-            sys.exit("{} is not installed".format(self._lib))
+            sys.exit("{!r} is not installed.".format(self._lib))
 
 
 with Check("This program requires Python 3.2 or newer.", custom_msg=True):
