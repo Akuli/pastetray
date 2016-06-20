@@ -61,7 +61,7 @@ later to make installing and running it easier.
 
 ## License
 
-PasteTray comes with no warranty. See [LICENSE](pastetray/LICENSE).
+PasteTray comes with no warranty. See [LICENSE](pastetray/doc/LICENSE).
 
 ## Authors
 
