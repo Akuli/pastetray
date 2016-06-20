@@ -63,7 +63,7 @@ def load():
         pass
 
 
-def unload():
+def save():
     """Save the list of recent pastes."""
     with open(_RECENT_PASTES_PATH, 'w') as f:
         for url in recent_pastes:

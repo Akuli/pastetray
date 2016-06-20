@@ -28,16 +28,20 @@ import webbrowser
 from gi.repository import Gtk, GLib, Pango
 from pkg_resources import resource_string
 
-from pastetray import _, backend, trayicon
+from pastetray import _, backend
 
-_pasters = []
+pasters = []
 
 
-class _Paster(Gtk.Builder):
+class Paster(Gtk.Builder):
     """Make a new paste."""
 
-    def __init__(self):
-        """Initialize the window."""
+    def __init__(self, *postpaste_funcs):
+        """Initialize the window.
+
+        If pasting succeeds, everything in postpaste_funcs will be
+        called with the paste URL as the only argument.
+        """
         Gtk.Builder.__init__(self)
         data = resource_string('pastetray', 'new_paste.glade')
         self.add_from_string(data.decode('utf-8'))
@@ -65,8 +69,11 @@ class _Paster(Gtk.Builder):
         get('paste_button').connect('clicked', self._on_paste_clicked)
         get('cancel_button').connect('clicked', self._destroy)
         get('window').connect('delete-event', self._destroy)
+        get('window').show_all()
 
+        self._postpaste_funcs = postpaste_funcs
         self._apply_preferences()
+        pasters.append(self)
 
     def _get_title(self):
         """Return the title the user has entered."""
@@ -207,9 +214,11 @@ class _Paster(Gtk.Builder):
             return True
 
         if self._success:
-            # Success message.
-            backend.recent_pastes.appendleft(self._response)
-            trayicon.update()
+            # Success.
+            url = self._response
+            for func in self._postpaste_funcs:
+                func(url)
+
             dialog = Gtk.MessageDialog(
                 self.get_object('window'), Gtk.DialogFlags.MODAL,
                 Gtk.MessageType.INFO, (
@@ -218,7 +227,7 @@ class _Paster(Gtk.Builder):
                 ), _("Pasting succeeded."),
             )
             dialog.set_title(_("Success"))
-            dialog.format_secondary_text(self._response)
+            dialog.format_secondary_text(url)
             if dialog.run() == Gtk.ResponseType.YES:
                 webbrowser.open(self._response)
             dialog.destroy()
@@ -247,11 +256,4 @@ class _Paster(Gtk.Builder):
         """Destroy the window."""
         # TODO: Save new default paste settings here?
         self.get_object('window').destroy()
-        _pasters.remove(self)
-
-
-def new_paste(widget=None):
-    """Make a new paste."""
-    paster = _Paster()
-    paster.get_object('window').show_all()
-    _pasters.append(paster)
+        pasters.remove(self)

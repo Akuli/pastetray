@@ -51,6 +51,7 @@ def set_value(section, key, value):
     else:
         raise TypeError("unknown value_type {.__name__}".format(type(value)))
 
+
 def get_value_with_type(section, key, value_type):
     """Return a value of type value_type from the configuration."""
     if value_type is str:

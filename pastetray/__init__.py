@@ -55,6 +55,7 @@ def _get_translation():
 
 _ = _get_translation().gettext
 gi.require_version('Gtk', '3.0')
+gi.require_version('GdkPixbuf', '2.0')
 GObject.threads_init()
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 

@@ -21,6 +21,10 @@
 
 """A preference editing window."""
 
+from gi.repository import Gtk
 
-def run(widget=None):
-    """Open a window for editing preferences."""
+
+class PreferenceWindow(Gtk.Window):
+    """A window for editing preferences."""
+
+    pass

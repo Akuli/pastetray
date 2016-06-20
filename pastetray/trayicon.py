@@ -19,165 +19,47 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""Utilities for managing trayicon_backend.py.
+"""The application indicator/tray icon.
 
-This file also contains the menuitems and some of the commands they run.
+Don't access this module directly. Use trayicon.py instead.
 """
 
-import os
-import shutil
-import tempfile
-from urllib.request import pathname2url
-import webbrowser
+from gi.repository import Gtk, Gdk
 
-from gi.repository import Gtk, GdkPixbuf
-from pkg_resources import (resource_filename, resource_listdir,
-                           resource_stream, resource_string)
+try:
+    from gi.repository import AppIndicator3     # NOQA
+except ImportError:
+    # Gtk.StatusIcon is deprecated in new versions of GTK+.
+    if not hasattr(Gtk, 'StatusIcon'):
+        raise ImportError("AppIndicator3 is not installed and Gtk.StatusIcon "
+                          "is deprecated in the current version of GTK+")
+    print("AppIndicator3 is not installed, Gtk.StatusIcon "
+          "will be used instead.")
+    AppIndicator3 = None
 
-import pastetray
-from pastetray import (_, backend, new_paste, preference_editor,
-                       trayicon_backend)
-
-
-def clear_recent_pastes(widget=None):
-    """Clear the recent paste list."""
-    dialog = Gtk.MessageDialog(
-        # Setting None as the transient parent is not recommended, but
-        # this application has no main window.
-        None, 0, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO,
-        _("Are you sure you want to clear the recent paste list?"),
-    )
-    dialog.set_title(_("Clear recent pastes"))
-    dialog.format_secondary_text(_("This cannot be undone."))
-    response = dialog.run()
-    dialog.destroy()
-    if response == Gtk.ResponseType.YES:
-        backend.recent_pastes.clear()
-        update()
+menu = Gtk.Menu()
 
 
-def show_help(widget=None):
-    """Open the help page in the web browser."""
-    try:
-        filename = resource_filename('pastetray', 'doc/index.html')
-    except NotImplementedError:
-        # Running from a zipfile. The whole doc directory needs to be
-        # extracted.
-        tempdir = os.path.join(tempfile.gettempdir(), 'pastetray-doc')
-        if not os.path.isdir(tempdir):
-            os.mkdir(tempdir)
-
-        for fname in resource_listdir('pastetray', 'doc'):
-            if not fname:
-                # Sometimes the list returned by resource_listdir
-                # contains empty strings for some reason.
-                continue
-
-            dstfile = os.path.join(tempdir, fname)
-            if os.path.isfile(dstfile):
-                # The help has already been viewed and there's no need
-                # to rewrite the file.
-                continue
-
-            with resource_stream('pastetray', 'doc/' + i) as src:
-                with open(dstfile, 'wb') as dst:
-                    shutil.copyfileobj(src, dst)
-
-        filename = os.path.join(tempdir, 'index.html')
-
-    # On X.Org, webbrowser.open() seems to use xdg-open by default
-    # instead of x-www-browser, so HTML files don't always open in a WWW
-    # browser. That's why x-www-browser is used when possible.
-    url = 'file://' + pathname2url(filename)
-    try:
-        webbrowser.get('x-www-browser').open(url)
-    except webbrowser.Error:
-        webbrowser.open(url)
-
-
-def show_about(widget=None):
-    """Display an about dialog."""
-    license = resource_string('pastetray', 'LICENSE')
-    logo = Gtk.IconTheme.get_default().lookup_icon(
-        Gtk.STOCK_PASTE, 128,
-        Gtk.IconLookupFlags.NO_SVG,
+def _on_click(statusicon, button, time):
+    """User clicks the statusicon."""
+    menu.popup(
+        None, None, Gtk.StatusIcon.position_menu, statusicon, button,
+        Gtk.get_current_event_time() if time is None else time,
     )
 
-    dialog = Gtk.AboutDialog()
-    dialog.set_program_name("PasteTray")
-    dialog.set_version(pastetray.VERSION)
-    dialog.set_comments(pastetray.SHORT_DESC[0].upper() +
-                        pastetray.SHORT_DESC[1:] + ".")
-    dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(logo.get_filename()))
-    dialog.set_license(license.decode('utf-8'))
-    dialog.set_resizable(True)     # The license is a bit long.
-    dialog.set_authors(pastetray.AUTHORS)
-    dialog.set_translator_credits(
-        '\n'.join(': '.join(item) for item in pastetray.TRANSLATORS.items())
-    )
-    dialog.run()
-    dialog.destroy()
 
-
-load = trayicon_backend.load
-
-
-# By making the menuitems now they don't need to be remade every time
-# the menu is updated.
-def _menuitems():
-    data = [
-        (Gtk.STOCK_NEW, _("New paste"), new_paste.new_paste),
-        (Gtk.STOCK_CLEAR, _("Clear recent pastes"), clear_recent_pastes),
-        (Gtk.STOCK_PREFERENCES, _("Preferences"), preference_editor.run),
-        (Gtk.STOCK_HELP, _("Help"), show_help),
-        (Gtk.STOCK_ABOUT, _("About"), show_about),
-        (Gtk.STOCK_QUIT, _("Quit"), Gtk.main_quit),
-    ]
-
-    # Check if Gtk.ImageMenuItem is deprecated.
-    not_deprecated = hasattr(Gtk, 'ImageMenuItem')
-
-    for stock, label, command in data:
-        if not_deprecated:
-            image = Gtk.Image.new_from_icon_name(stock, Gtk.IconSize.MENU)
-            item = Gtk.ImageMenuItem(label)
-            item.set_image(image)
-        else:
-            item = Gtk.MenuItem(label)
-        item.connect('activate', command)
-        yield stock, item
-
-_menuitems = dict(_menuitems())
-
-
-def _on_pasteitem_clicked(widget, url):
-    """Open url."""
-    webbrowser.open(url)
-
-
-def update():
-    """Update the trayicon."""
-    menu = trayicon_backend.menu
-    for item in menu.get_children():
-        # For some reason, sometimes this makes weird error messages.
-        menu.remove(item)
-
-    menu.add(_menuitems[Gtk.STOCK_NEW])
-    menu.add(Gtk.SeparatorMenuItem())
-    if backend.recent_pastes:
-        for number, url in enumerate(backend.recent_pastes, start=1):
-            item = Gtk.MenuItem('{}. {}'.format(number, url))
-            item.connect('activate', _on_pasteitem_clicked, url)
-            menu.add(item)
+def load():
+    """Load the trayicon."""
+    global _trayicon
+    if AppIndicator3 is None:
+        _trayicon = Gtk.StatusIcon()
+        _trayicon.set_from_icon_name(Gtk.STOCK_PASTE)
+        _trayicon.connect('popup-menu', _on_click)
+        _trayicon.connect('activate', _on_click, Gdk.BUTTON_PRIMARY, None)
     else:
-        item = Gtk.MenuItem(_("(no pastes)"))
-        item.set_state(Gtk.StateType.INSENSITIVE)
-        menu.add(item)
-    menu.add(Gtk.SeparatorMenuItem())
-    menu.add(_menuitems[Gtk.STOCK_CLEAR])
-    menu.add(_menuitems[Gtk.STOCK_PREFERENCES])
-    menu.add(_menuitems[Gtk.STOCK_HELP])
-    menu.add(_menuitems[Gtk.STOCK_ABOUT])
-    menu.add(_menuitems[Gtk.STOCK_QUIT])
-
-    menu.show_all()
+        _trayicon = AppIndicator3.Indicator.new(
+            'pastetray', Gtk.STOCK_PASTE,
+            AppIndicator3.IndicatorCategory.APPLICATION_STATUS,
+        )
+        _trayicon.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        _trayicon.set_menu(menu)
