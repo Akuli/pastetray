@@ -50,14 +50,20 @@ def change_preferences(widget=None):
 
 def clear_recent_pastes(widget=None):
     """Clear the recent paste list."""
-    dialog = Gtk.MessageDialog(
-        # Setting None as the transient parent is not recommended, but
-        # this application has no main window.
-        None, 0, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO,
-        _("Are you sure you want to clear the recent paste list?"),
-    )
+    if backend.recent_pastes:
+        dialog = Gtk.MessageDialog(
+            # Setting None as the transient parent is not recommended, but
+            # this application has no main window.
+            None, 0, Gtk.MessageType.WARNING, Gtk.ButtonsType.YES_NO,
+            _("Are you sure you want to clear the recent paste list?"),
+        )
+        dialog.format_secondary_text(_("This cannot be undone."))
+    else:
+        dialog = Gtk.MessageDialog(
+            None, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK,
+            _("There are no recent pastes to clear."),
+        )
     dialog.set_title(_("Clear recent pastes"))
-    dialog.format_secondary_text(_("This cannot be undone."))
     response = dialog.run()
     dialog.destroy()
     if response == Gtk.ResponseType.YES:
@@ -171,7 +177,6 @@ def update_trayicon(widget=None):
 
     if backend.recent_pastes:
         for number, url in enumerate(backend.recent_pastes, start=1):
-            print(number, url)
             item = Gtk.MenuItem('{}. {}'.format(number, url))
             item.connect('activate', lambda i, url=url: webbrowser.open(url))
             trayicon.menu.add(item)
