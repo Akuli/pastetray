@@ -64,29 +64,22 @@ def fix_links(md):
 
 def make_html(md):
     """Convert markdown to HTML."""
+    title = md.split('\n', 1)[0].lstrip('# ')
     md = fix_codeblocks(md)
     md = fix_links(md)
-    html = markdown.markdown(md, extensions=['codehilite'])
-    result = textwrap.dedent('''\
-        <!DOCTYPE html>
-        <html>
-        <head>
-        <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="style.css">
-        </head>
-        <body>
-        {body}
-        </body>
-        </html>
-        ''')
-    result = result.format(body=html)
-    return result
+    content = markdown.markdown(md, extensions=['codehilite'])
+    with open(os.path.join('scripts', 'template.html'), 'r') as f:
+        template = f.read()
+    return template.format(title=title, content=content)
 
 
 def make_css():
     """Return the content of a style.css file."""
-    formatter = HtmlFormatter()
-    return formatter.get_style_defs('.codehilite')
+    # Nice styles: vs, tango
+    formatter = HtmlFormatter(style='tango')
+    with open(os.path.join('scripts', 'template.css'), 'r') as f:
+        template = f.read()
+    return template + formatter.get_style_defs('.codehilite')
 
 
 def main():
