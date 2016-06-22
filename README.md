@@ -20,6 +20,10 @@ PasteTray. Just click the link.
 [Writing custom pastebin scripts in Python](writing_pastebins.md) is
 also possible.
 
+## License
+
+PasteTray comes with no warranty. See [LICENSE](pastetray/doc/LICENSE).
+
 ## Downloading, running and installing
 
 To run PasteTray, you need to install gi with GTK+ 3, Python 3 with PIP
@@ -58,10 +62,6 @@ python3 -m pip uninstall pastetray
 
 I'll make distribution packages (at least a Debian package) of PasteTray
 later to make installing and running it easier.
-
-## License
-
-PasteTray comes with no warranty. See [LICENSE](pastetray/doc/LICENSE).
 
 ## Authors
 
