@@ -71,8 +71,8 @@ def clear_recent_pastes(widget=None):
 def show_help_page(widget=None):
     """Open the help HTML page in the web browser."""
     # Create tempfiles if needed.
-    for i in resource_listdir('pastetray', 'doc'):
-        resource_filename('pastetray', 'doc/' + i)
+    for filename in resource_listdir('pastetray', 'doc'):
+        resource_filename('pastetray', 'doc/' + filename)
 
     # Get the URI.
     path = resource_filename('pastetray', 'doc/index.html')

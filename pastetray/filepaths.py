@@ -58,7 +58,7 @@ def resource_listdir(*args):
     Unlike pkg_resources.resource_listdir(), this function never returns
     empty results.
     """
-    return [i for i in pkg_resources.resource_listdir(*args) if i]
+    return [item for item in pkg_resources.resource_listdir(*args) if item]
 
 
 # Windows uses CapsWords for application names, but most other operating

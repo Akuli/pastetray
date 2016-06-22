@@ -74,7 +74,7 @@ setup(
     url=pastetray.URL,
     author=', '.join(pastetray.AUTHORS),
     license='MIT',
-    keywords=' '.join(i.replace(' ', '') for i in pastetray.KEYWORDS),
+    keywords=' '.join(word.replace(' ', '') for word in pastetray.KEYWORDS),
     zip_safe=True,
     install_requires=pastetray.PIP_DEPENDS,
     packages=['pastetray', 'pastetray.pastebins'],
