@@ -30,7 +30,7 @@ from pkg_resources import resource_string
 
 from pastetray import _, backend
 
-pasters = []
+_pasters = []
 
 
 class Paster(Gtk.Builder):
@@ -56,7 +56,7 @@ class Paster(Gtk.Builder):
         get('username_label').set_label(_("Your name or nick:"))
         get('expiry_label').set_label(_("Expiry in days:"))
 
-        for name in sorted(pastebins, key=str.lower):
+        for name in sorted(backend.pastebins, key=str.lower):
             get('pastebin_combo').append_text(name)
         get('pastebin_combo').set_active(0)             # from settings
         get('username_entry').set_text(os.getlogin())   # from settings
@@ -69,7 +69,7 @@ class Paster(Gtk.Builder):
         get('window').show_all()
 
         self._postpaste_funcs = postpaste_funcs
-        pasters.append(self)
+        _pasters.append(self)
 
         # TODO: Use preferences, and add scrollbars for the textview.
         get('textview').override_font(Pango.FontDescription('monospace'))
@@ -246,4 +246,4 @@ class Paster(Gtk.Builder):
         """Destroy the window."""
         # TODO: Save new default paste settings here?
         self.get_object('window').destroy()
-        pasters.remove(self)
+        _pasters.remove(self)

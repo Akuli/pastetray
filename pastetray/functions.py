@@ -36,7 +36,6 @@ def make_new_paste(widget=None):
     """Make a new paste."""
     postfuncs = backend.recent_pastes.appendleft, update_trayicon
     paster = new_paste.Paster(postpaste_funcs=postfuncs)
-    new_paste.pasters.append(paster)
 
 
 def change_preferences(widget=None):
