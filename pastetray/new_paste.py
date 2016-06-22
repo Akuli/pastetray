@@ -56,9 +56,7 @@ class Paster(Gtk.Builder):
         get('username_label').set_label(_("Your name or nick:"))
         get('expiry_label').set_label(_("Expiry in days:"))
 
-        names = [pastebin.name for pastebin in backend.pastebins]
-        names.sort(key=str.lower)
-        for name in names:
+        for name in sorted(pastebins, key=str.lower):
             get('pastebin_combo').append_text(name)
         get('pastebin_combo').set_active(0)             # from settings
         get('username_entry').set_text(os.getlogin())   # from settings
@@ -89,11 +87,7 @@ class Paster(Gtk.Builder):
         """Return currently selected pastebin."""
         combo = self.get_object('pastebin_combo')
         pastebin_name = combo.get_active_text()
-
-        for pastebin in backend.pastebins:
-            if pastebin.name == pastebin_name:
-                return pastebin
-        raise LookupError("no pastebin named {!r}".format(pastebin_name))
+        return backend.pastebins[pastebin_name]
 
     def _get_syntax(self):
         """Return currently selected syntax.
@@ -121,18 +115,19 @@ class Paster(Gtk.Builder):
         pastebin = self._get_pastebin()
 
         insensitives = ['progressbar']
-        if 'syntax' not in pastebin.paste_args:
-            insensitives.append('syntax_label')
-            insensitives.append('syntax_combo')
         if 'title' not in pastebin.paste_args:
-            insensitives.append('title_entry')
+            insensitives.append(self.get_object('title_label'))
+            insensitives.append(self.get_object('title_entry'))
+        if 'syntax' not in pastebin.paste_args:
+            insensitives.append(self.get_object('syntax_label'))
+            insensitives.append(self.get_object('syntax_combo'))
         if 'username' not in pastebin.paste_args:
-            insensitives.append('username_label')
-            insensitives.append('username_entry')
-        if len(pastebin.expiry_days) == 1:
-            insensitives.append('expiry_combo')
+            insensitives.append(self.get_object('username_label'))
+            insensitives.append(self.get_object('username_entry'))
+        if len(pastebin.expiry_days) < 2:
+            insensitives.append(self.get_object('expiry_label'))
+            insensitives.append(self.get_object('expiry_combo'))
 
-        insensitives = [self.get_object(i) for i in insensitives]
         for obj in self.get_objects():
             obj.set_sensitive(obj not in insensitives)
 
@@ -184,13 +179,13 @@ class Paster(Gtk.Builder):
         self._make_insensitive()
 
         pasting_thread = threading.Thread(
-            target=self._paste_with_pastebin,
+            target=self._paste_with_backend,
             args=(pastebin, kwargs), daemon=True,
         )
         pasting_thread.start()
         GLib.timeout_add(50, self._on_timeout, pasting_thread)
 
-    def _paste_with_pastebin(self, pastebin, kwargs):
+    def _paste_with_backend(self, pastebin, kwargs):
         """Make a paste.
 
         This is executed in another thread because this does not access
