@@ -35,7 +35,8 @@ paste_args = ['content']
 
 def paste(content):
     """Make a paste to hastebin.com."""
-    response = requests.post('http://hastebin.com/documents/', data=content)
+    response = requests.post('http://hastebin.com/documents/',
+                             data=content.encode('utf-8'))
     response.raise_for_status()
     return 'http://hastebin.com/' + response.json()['key']
 ```
@@ -69,7 +70,8 @@ paste_args = ['content']
 
 def paste(content):
     """Make a paste to hastebin.com."""
-    response = requests.post('http://hastebin.com/documents/', data=content)
+    response = requests.post('http://hastebin.com/documents/',
+                             data=content.encode('utf-8'))
     response.raise_for_status()
     return 'http://hastebin.com/' + response.json()['key']
 ```

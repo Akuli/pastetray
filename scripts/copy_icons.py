@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright (c) 2016 Akuli
 
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,10 +21,28 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""A preference editing window."""
+"""Make other icons from big.png using imagemagick."""
 
-from gi.repository import Gtk
+import os
+import shutil
+import subprocess
+import sys
+
+SIZES = [16, 22, 24, 32, 48, 64, 128, 256]
 
 
-class PreferenceWindow(Gtk.Window):
-    """A window for editing preferences."""
+def main():
+    """Run the script."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(os.path.join(os.path.dirname(here), 'pastetray', 'icons'))
+
+    for size in SIZES:
+        size = '{0}x{0}'.format(size)
+        shutil.copy('big.png', size + '.png')
+        subprocess.check_call(['mogrify', '-resize', size, size + '.png'])
+
+    sys.exit()
+
+
+if __name__ == '__main__':
+    main()

@@ -36,7 +36,7 @@ pasters = []
 class Paster(Gtk.Builder):
     """Make a new paste."""
 
-    def __init__(self, *postpaste_funcs):
+    def __init__(self, postpaste_funcs=()):
         """Initialize the window.
 
         If pasting succeeds, everything in postpaste_funcs will be
@@ -50,12 +50,11 @@ class Paster(Gtk.Builder):
         get('window').set_title(_("New paste") + " - PasteTray")
         get('title_entry').set_tooltip_text(_("The title of this paste"))
         get('textview').set_tooltip_text(_("The content of this paste"))
+
         get('pastebin_label').set_label(_("Pastebin:"))
         get('syntax_label').set_label(_("Syntax highlighting:"))
         get('username_label').set_label(_("Your name or nick:"))
-        get('username_label').set_halign(Gtk.Align.START)
         get('expiry_label').set_label(_("Expiry in days:"))
-        self._apply_preferences()
 
         names = [pastebin.name for pastebin in backend.pastebins]
         names.sort(key=str.lower)
@@ -72,8 +71,10 @@ class Paster(Gtk.Builder):
         get('window').show_all()
 
         self._postpaste_funcs = postpaste_funcs
-        self._apply_preferences()
         pasters.append(self)
+
+        # TODO: Use preferences, and add scrollbars for the textview.
+        get('textview').override_font(Pango.FontDescription('monospace'))
 
     def _get_title(self):
         """Return the title the user has entered."""
@@ -245,12 +246,6 @@ class Paster(Gtk.Builder):
             dialog.run()
             dialog.destroy()
             self._make_sensitive()
-
-    def _apply_preferences(self):
-        """Apply new preferences."""
-        self.get_object('textview').override_font(
-            Pango.FontDescription('monospace')
-        )
 
     def _destroy(self, *ign):
         """Destroy the window."""

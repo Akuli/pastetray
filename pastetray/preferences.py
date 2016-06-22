@@ -52,7 +52,7 @@ def set_value(section, key, value):
         raise TypeError("unknown value_type {.__name__}".format(type(value)))
 
 
-def get_value_with_type(section, key, value_type):
+def get_with_type(section, key, value_type):
     """Return a value of type value_type from the configuration."""
     if value_type is str:
         return _config.get(section, key)
@@ -63,7 +63,13 @@ def get_value_with_type(section, key, value_type):
     raise TypeError("unknown value type {.__name__}".format(value_type))
 
 
-def connect_property(widget, prop, section, key, value_type):
+def _on_notify(widget, gparam, section, key):
+    """Change settings when a GObject property's value is changed."""
+    value = widget.get_property(prop)
+    set_value(section, key, value)
+
+
+def connect_property(widget, prop, section, key):
     """Make the settings change automatically, and set default value.
 
     This will read the current setting from the configuration, set the
@@ -71,20 +77,10 @@ def connect_property(widget, prop, section, key, value_type):
     will be automatically updated when the value of the property
     changes.
     """
-    # This is a function inside a function because otherwise this
-    # function would need to take a lot of parameters.
-    def on_notify(widget, gparam):
-        value = widget.get_property(prop)
-        set_value(section, key, value, )
+    value_type = type(widget.get_property(prop))
     current_value = _config.get_with_type(section, key, value_type)
     widget.set_property(prop, current_value)
-    widget.connect('notify::'+prop, _on_notify, prop, section, key, value_type)
-
-
-def _on_notify(widget, gparam, prop, *args):
-    """Change settings when a GObject property's value is changed."""
-    value = widget.get_property(prop)
-    set_with_type(*args)
+    widget.connect('notify::'+prop, _on_notify, section, key)
 
 
 def load():

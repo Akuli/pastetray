@@ -28,17 +28,17 @@ from urllib.request import pathname2url
 import webbrowser
 
 from gi.repository import Gtk, GdkPixbuf
-from pkg_resources import (resource_filename, resource_listdir,
-                           resource_stream, resource_string)
+from pkg_resources import resource_stream, resource_string
 
 import pastetray
 from pastetray import _, backend, new_paste, preference_editor, trayicon
+from pastetray.filepaths import resource_filename, resource_listdir
 
 
 def make_new_paste(widget=None):
     """Make a new paste."""
-    paster = new_paste.Paster(backend.recent_pastes.appendleft,
-                              update_trayicon)
+    postfuncs = backend.recent_pastes.appendleft, update_trayicon
+    paster = new_paste.Paster(postpaste_funcs=postfuncs)
     new_paste.pasters.append(paster)
 
 
@@ -52,8 +52,8 @@ def clear_recent_pastes(widget=None):
     """Clear the recent paste list."""
     if backend.recent_pastes:
         dialog = Gtk.MessageDialog(
-            # Setting None as the transient parent is not recommended, but
-            # this application has no main window.
+            # Setting None as the transient parent is not recommended,
+            # but this application has no main window.
             None, 0, Gtk.MessageType.WARNING, Gtk.ButtonsType.YES_NO,
             _("Are you sure you want to clear the recent paste list?"),
         )
@@ -71,63 +71,42 @@ def clear_recent_pastes(widget=None):
         update_trayicon()
 
 
-def show_help_dialog(widget=None):
-    """Open the help page in the web browser."""
-    try:
-        filename = resource_filename('pastetray', 'doc/index.html')
-    except NotImplementedError:
-        # Running from a zipfile. The whole doc directory needs to be
-        # extracted.
-        tempdir = os.path.join(tempfile.gettempdir(), 'pastetray-doc')
-        if not os.path.isdir(tempdir):
-            os.mkdir(tempdir)
+def show_help_page(widget=None):
+    """Open the help HTML page in the web browser."""
+    # Create tempfiles if needed.
+    for i in resource_listdir('pastetray', 'doc'):
+        resource_filename('pastetray', 'doc/' + i)
 
-        for fname in resource_listdir('pastetray', 'doc'):
-            if not fname:
-                # Sometimes the list returned by resource_listdir
-                # contains empty strings for some reason.
-                continue
-
-            dstfile = os.path.join(tempdir, fname)
-            if os.path.isfile(dstfile):
-                # The help has already been viewed and there's no need
-                # to rewrite the file.
-                continue
-
-            with resource_stream('pastetray', 'doc/{}'.format(fname)) as src:
-                with open(dstfile, 'wb') as dst:
-                    shutil.copyfileobj(src, dst)
-
-        filename = os.path.join(tempdir, 'index.html')
+    # Get the URI.
+    path = resource_filename('pastetray', 'doc/index.html')
+    uri = 'file://' + pathname2url(path)
 
     # On X.Org, webbrowser.open() seems to use xdg-open by default
     # instead of x-www-browser, so HTML files don't always open in a WWW
     # browser. That's why x-www-browser is used when possible.
-    url = 'file://' + pathname2url(filename)
     try:
-        webbrowser.get('x-www-browser').open(url)
+        webbrowser.get('x-www-browser').open(uri)
     except webbrowser.Error:
-        webbrowser.open(url)
+        webbrowser.open(uri)
 
 
-# The license is loaded here, because this way PasteTray cannot run
-# without being able to display the license.
-_license = resource_string('pastetray', 'doc/LICENSE').decode('utf-8')
+# The license and logo are loaded here, because this way PasteTray
+# will not run without being able to display the about dialog.
+_license = resource_string('pastetray', 'doc/LICENSE')
+_license = _license.decode('utf-8')
+
+_logo = resource_filename('pastetray', 'icons/128x128.png')
+_logo = GdkPixbuf.Pixbuf.new_from_file(_logo)
 
 
 def show_about_dialog(widget=None):
     """Display an about dialog."""
-    logo = Gtk.IconTheme.get_default().lookup_icon(
-        Gtk.STOCK_PASTE, 128,
-        Gtk.IconLookupFlags.NO_SVG,
-    )
-
     dialog = Gtk.AboutDialog()
     dialog.set_program_name("PasteTray")
     dialog.set_version(pastetray.VERSION)
     dialog.set_comments(pastetray.SHORT_DESC[0].upper() +
                         pastetray.SHORT_DESC[1:] + ".")
-    dialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(logo.get_filename()))
+    dialog.set_logo(_logo)
     dialog.set_license(_license)
     dialog.set_resizable(True)     # The license is a bit long.
     dialog.set_authors(pastetray.AUTHORS)
@@ -145,7 +124,7 @@ def _menuitems():
         (Gtk.STOCK_NEW, _("New paste"), make_new_paste),
         (Gtk.STOCK_CLEAR, _("Clear recent pastes"), clear_recent_pastes),
         (Gtk.STOCK_PREFERENCES, _("Preferences"), change_preferences),
-        (Gtk.STOCK_HELP, _("Help"), show_help_dialog),
+        (Gtk.STOCK_HELP, _("Help"), show_help_page),
         (Gtk.STOCK_ABOUT, _("About"), show_about_dialog),
         (Gtk.STOCK_QUIT, _("Quit"), Gtk.main_quit),
     ]

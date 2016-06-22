@@ -21,7 +21,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""Make a help.html for PasteTray."""
+"""Make HTML documentation for PasteTray from markdown files."""
 
 import os
 import sys
@@ -75,7 +75,6 @@ def make_html(md):
 
 def make_css():
     """Return the content of a style.css file."""
-    # Nice styles: vs, tango
     formatter = HtmlFormatter(style='tango')
     with open(os.path.join('scripts', 'template.css'), 'r') as f:
         template = f.read()

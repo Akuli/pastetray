@@ -67,7 +67,8 @@ shortest pastebin scripts PasteTray comes with.</p>
 
 <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make a paste to hastebin.com.&quot;&quot;&quot;</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;http://hastebin.com/documents/&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;http://hastebin.com/documents/&#39;</span><span class="p">,</span>
+                             <span class="n">data</span><span class="o">=</span><span class="n">content</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
     <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
     <span class="k">return</span> <span class="s1">&#39;http://hastebin.com/&#39;</span> <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
 </pre></div>
@@ -98,7 +99,8 @@ case, one month is the only expiration hastebin allows so we set
 
 <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make a paste to hastebin.com.&quot;&quot;&quot;</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;http://hastebin.com/documents/&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;http://hastebin.com/documents/&#39;</span><span class="p">,</span>
+                             <span class="n">data</span><span class="o">=</span><span class="n">content</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
     <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
     <span class="k">return</span> <span class="s1">&#39;http://hastebin.com/&#39;</span> <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
 </pre></div>

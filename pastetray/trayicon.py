@@ -24,7 +24,13 @@
 Don't access this module directly. Use trayicon.py instead.
 """
 
+import shutil
+import tempfile
+
 from gi.repository import Gtk, Gdk
+from pkg_resources import resource_stream
+
+from pastetray.filepaths import resource_filename
 
 try:
     from gi.repository import AppIndicator3     # NOQA
@@ -37,28 +43,31 @@ except ImportError:
           "will be used instead.")
     AppIndicator3 = None
 
+
 menu = Gtk.Menu()
 
 
 def _on_click(statusicon, button, time):
     """User clicks the statusicon."""
     menu.popup(
-        None, None, Gtk.StatusIcon.position_menu, statusicon, button,
-        Gtk.get_current_event_time() if time is None else time,
+        None, None, Gtk.StatusIcon.position_menu, statusicon,
+        button, time or Gtk.get_current_event_time(),
     )
 
 
 def load():
     """Load the trayicon."""
-    global _trayicon
+    global _trayicon      # Avoid garbage collection.
+
+    icon_filename = resource_filename('pastetray', 'icons/24x24.png')
     if AppIndicator3 is None:
         _trayicon = Gtk.StatusIcon()
-        _trayicon.set_from_icon_name(Gtk.STOCK_PASTE)
+        _trayicon.set_from_file(icon_filename)
         _trayicon.connect('popup-menu', _on_click)
         _trayicon.connect('activate', _on_click, Gdk.BUTTON_PRIMARY, None)
     else:
         _trayicon = AppIndicator3.Indicator.new(
-            'pastetray', Gtk.STOCK_PASTE,
+            'pastetray', icon_filename,
             AppIndicator3.IndicatorCategory.APPLICATION_STATUS,
         )
         _trayicon.set_status(AppIndicator3.IndicatorStatus.ACTIVE)

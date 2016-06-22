@@ -24,30 +24,29 @@
 import collections
 import importlib
 import os
-
-from pkg_resources import resource_listdir
+import re
 
 from pastetray import filepaths
+from pastetray.filepaths import resource_listdir
 
+
+# TODO: Use a dictionary with name:module
+#       pairs instead of a list of modules.
+pastebins = []
+recent_pastes = collections.deque(maxlen=10)
 
 _RECENT_PASTES_PATH = os.path.join(filepaths.user_config_dir,
                                    'recent_pastes.txt')
-
-pastebins = []
-recent_pastes = collections.deque(maxlen=10)
 
 
 def load():
     """Load pastebins and recent pastes."""
     pastebins.clear()
     for name in resource_listdir('pastetray', 'pastebins'):
-        if name.startswith('__') or name.endswith('__'):
-            # __init__.py, __pycache__ etc.
+        if '__' in name or not re.search(r'^[A-Za-z_]+\.py$', name):
+            # Not a valid Python module.
             continue
-        name, ext = os.path.splitext(name)
-        if ext != '.py' or not name.isidentifier():
-            continue
-        modulename = 'pastetray.pastebins.' + name
+        modulename = 'pastetray.pastebins.' + os.path.splitext(name)[0]
         module = importlib.import_module(modulename)
         if module.name in (pb.name for pb in pastebins):
             raise Exception("there are two pastebins named {!r}"
