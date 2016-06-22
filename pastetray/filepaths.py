@@ -23,6 +23,7 @@
 
 import functools
 import os
+import shutil
 import sys
 import tempfile
 
@@ -52,9 +53,10 @@ def resource_filename(*args):
 
 
 def resource_listdir(*args):
-    """Fix a bug in pkg_resources.resource_listdir().
+    """List the contents of a resource directory.
 
-    This function only returns non-empty results.
+    Unlike pkg_resources.resource_listdir(), this function never returns
+    empty results.
     """
     return [i for i in pkg_resources.resource_listdir(*args) if i]
 

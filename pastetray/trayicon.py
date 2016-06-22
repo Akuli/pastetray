@@ -21,11 +21,8 @@
 
 """The application indicator/tray icon."""
 
-import shutil
-import tempfile
 
 from gi.repository import Gtk, Gdk
-from pkg_resources import resource_stream
 
 from pastetray.filepaths import resource_filename
 

@@ -21,14 +21,11 @@
 
 """Functions for the trayicon."""
 
-import os
-import shutil
-import tempfile
-from urllib.request import pathname2url
 import webbrowser
+from urllib.request import pathname2url
 
 from gi.repository import Gtk, GdkPixbuf
-from pkg_resources import resource_stream, resource_string
+from pkg_resources import resource_string
 
 import pastetray
 from pastetray import _, backend, new_paste, preference_editor, trayicon

@@ -25,7 +25,6 @@
 
 import os
 import sys
-import textwrap
 
 import markdown
 from pygments.formatters import HtmlFormatter
