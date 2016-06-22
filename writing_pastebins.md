@@ -1,7 +1,7 @@
 # Advanced PasteTray usage: Custom pastebin scripts
 
 If PasteTray doesn't support your favorite pastebin by default and you
-have some experience with programming in Python you can write a
+have some experience with programming in Python, you can write a
 PasteTray plugin.
 
 Add your pastebin script to the same directory with other pastebin

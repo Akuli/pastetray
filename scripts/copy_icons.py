@@ -34,12 +34,17 @@ SIZES = [16, 22, 24, 32, 48, 64, 128, 256]
 def main():
     """Run the script."""
     here = os.path.dirname(os.path.abspath(__file__))
-    os.chdir(os.path.join(os.path.dirname(here), 'pastetray', 'icons'))
+    os.chdir(os.path.dirname(here))
 
     for size in SIZES:
         size = '{0}x{0}'.format(size)
-        shutil.copy('big.png', size + '.png')
-        subprocess.check_call(['mogrify', '-resize', size, size + '.png'])
+        src = os.path.join('pastetray', 'icons', 'big.png')
+        dst = os.path.join('pastetray', 'icons', size+'.png')
+        shutil.copy(src, dst)
+        subprocess.check_call(['mogrify', '-resize', size, dst])
+
+    shutil.copy(os.path.join('pastetray', 'icons', '16x16.png'),
+                os.path.join('pastetray', 'doc', 'icon.png'))
 
     sys.exit()
 
