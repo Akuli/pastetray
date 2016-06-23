@@ -66,7 +66,6 @@ class Paster(Gtk.Builder):
         get('paste_button').connect('clicked', self._on_paste_clicked)
         get('cancel_button').connect('clicked', self._destroy)
         get('window').connect('delete-event', self._destroy)
-        get('window').show_all()
 
         self._postpaste_funcs = postpaste_funcs
         _pasters.append(self)
@@ -138,7 +137,7 @@ class Paster(Gtk.Builder):
         for obj in self.get_objects():
             obj.set_sensitive(obj in sensitives)
 
-    def _on_pastebin_changed(self, pastebin_combo):
+    def _on_pastebin_changed(self, widget):
         pastebin = self._get_pastebin()
 
         if 'syntax' in pastebin.paste_args:
@@ -164,7 +163,7 @@ class Paster(Gtk.Builder):
 
         self._make_sensitive()
 
-    def _on_paste_clicked(self, button):
+    def _on_paste_clicked(self, widget):
         """Run when user clicks the paste button."""
         pastebin = self._get_pastebin()
         getters = {
