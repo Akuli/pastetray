@@ -30,6 +30,54 @@ from pkg_resources import resource_string
 
 from pastetray import _, backend
 
+
+class _EntryCompletion:
+    """Simple entry autocompletion."""
+
+    def __init__(self, entry, image, invalid_choice_tooltip):
+        """Set up the autocompletion.
+
+        The entry should be a Gtk.Entry, and image should be a Gtk.Image
+        next to it. The image will be changed depending on wether the
+        text in the entry is in the completions, and the tooltip will be
+        set to invalid_choice_tooltip if it's not.
+        """
+        self._entry = entry
+        self._image = image
+        self._tooltip = invalid_choice_tooltip
+
+        self._liststore = Gtk.ListStore(str)
+        self._completion = Gtk.EntryCompletion()
+        self._completion.set_model(self._liststore)
+        self._completion.set_text_column(0)
+        self._completion.set_match_func(self._match)
+        entry.set_completion(self._completion)
+        entry.connect('changed', self._on_changed)
+
+    def _match(self, completion, char, tree_iter):
+        """Check if the completion should be displayed."""
+        entry_text = self._entry.get_text()
+        match_text = self._liststore[tree_iter][0]
+        return entry_text.lower().strip() in match_text.lower()
+
+    def _on_changed(self, entry):
+        """Display a triangle if entry's text is not in completions."""
+        entry_text = entry.get_text()
+        if entry_text in (i[0] for i in self._liststore):
+            self._image.clear()
+            self._image.set_tooltip_text(None)
+        else:
+            self._image.set_from_icon_name(Gtk.STOCK_CAPS_LOCK_WARNING,
+                                           Gtk.IconSize.BUTTON)
+            self._image.set_tooltip_text(self._tooltip.format(entry_text))
+
+    def set_completions(self, completions):
+        """Set the autocompletion list to complete from."""
+        self._liststore.clear()
+        for completion in completions:
+            self._liststore.append([completion])
+
+
 _pasters = []
 
 
@@ -46,32 +94,38 @@ class Paster(Gtk.Builder):
         data = resource_string('pastetray', 'new_paste.glade')
         self.add_from_string(data.decode('utf-8'))
 
+        self._postpaste_funcs = postpaste_funcs
         get = self.get_object
-        get('window').set_title(_("New paste") + " - PasteTray")
+
+        # TODO: Use preferences, and add scrollbars!
         get('title_entry').set_tooltip_text(_("The title of this paste"))
         get('textview').set_tooltip_text(_("The content of this paste"))
+        get('textview').override_font(Pango.FontDescription('monospace'))
 
-        get('pastebin_label').set_label(_("Pastebin:"))
-        get('syntax_label').set_label(_("Syntax highlighting:"))
-        get('username_label').set_label(_("Your name or nick:"))
         get('expiry_label').set_label(_("Expiry in days:"))
-
-        for name in sorted(backend.pastebins, key=str.lower):
-            get('pastebin_combo').append_text(name)
-        get('pastebin_combo').set_active(0)             # from settings
+        get('username_label').set_label(_("Your name or nick:"))
         get('username_entry').set_text(os.getlogin())   # from settings
 
+        get('syntax_label').set_label(_("Syntax highlighting:"))
+        self._syntax_completion = _EntryCompletion(
+            get('syntax_entry'), get('syntax_image'),
+            _("No syntax highlighting named {!r}"),
+        )
+
+        get('pastebin_label').set_label(_("Pastebin:"))
+        pastebin_names = sorted(backend.pastebins.keys(), key=str.lower)
+        for name in pastebin_names:
+            get('pastebin_combo').append_text(name)
+        get('pastebin_combo').set_active(0)      # from settings
         get('pastebin_combo').connect('changed', self._on_pastebin_changed)
-        self._on_pastebin_changed(get('pastebin_combo'))
+        self._on_pastebin_changed()
+
         get('paste_button').connect('clicked', self._on_paste_clicked)
         get('cancel_button').connect('clicked', self._destroy)
+        get('window').set_title(_("New paste") + " - PasteTray")
         get('window').connect('delete-event', self._destroy)
 
-        self._postpaste_funcs = postpaste_funcs
         _pasters.append(self)
-
-        # TODO: Use preferences, and add scrollbars for the textview.
-        get('textview').override_font(Pango.FontDescription('monospace'))
 
     def _get_title(self):
         """Return the title the user has entered."""
@@ -91,13 +145,15 @@ class Paster(Gtk.Builder):
     def _get_syntax(self):
         """Return currently selected syntax.
 
-        The value returned by this function can be passed directly to
+        Raise an exception if the pastebin doesn't support syntax
+        highlighting. The return value can be passed directly to
         pastebin.paste().
         """
         pastebin = self._get_pastebin()
-        combo = self.get_object('syntax_combo')
-        syntax_name = combo.get_active_text()
-        return pastebin.syntax_choices[syntax_name]
+        entry = self.get_object('syntax_entry')
+        syntax_name = entry.get_text()
+        syntax_default = pastebin.syntax_choices[pastebin.syntax_default]
+        return pastebin.syntax_choices.get(syntax_name, syntax_default)
 
     def _get_username(self):
         """Return currently entered username."""
@@ -113,13 +169,14 @@ class Paster(Gtk.Builder):
         """Make most of the widgets sensitive."""
         pastebin = self._get_pastebin()
 
-        insensitives = ['progressbar']
+        insensitives = [self.get_object('progressbar')]
         if 'title' not in pastebin.paste_args:
             insensitives.append(self.get_object('title_label'))
             insensitives.append(self.get_object('title_entry'))
         if 'syntax' not in pastebin.paste_args:
             insensitives.append(self.get_object('syntax_label'))
-            insensitives.append(self.get_object('syntax_combo'))
+            insensitives.append(self.get_object('syntax_entry'))
+            insensitives.append(self.get_object('syntax_image'))
         if 'username' not in pastebin.paste_args:
             insensitives.append(self.get_object('username_label'))
             insensitives.append(self.get_object('username_entry'))
@@ -137,17 +194,16 @@ class Paster(Gtk.Builder):
         for obj in self.get_objects():
             obj.set_sensitive(obj in sensitives)
 
-    def _on_pastebin_changed(self, widget):
+    def _on_pastebin_changed(self, widget=None):
+        """Apply new syntax and expiry choices."""
         pastebin = self._get_pastebin()
 
         if 'syntax' in pastebin.paste_args:
-            choices = sorted(pastebin.syntax_choices, key=str.lower)
-            combo = self.get_object('syntax_combo')
-            combo.remove_all()
-            for choice in choices:
-                combo.append_text(choice)
+            completions = pastebin.syntax_choices.keys()
+            self._syntax_completion.set_completions(completions)
+            entry = self.get_object('syntax_entry')
             # TODO: Get this from settings.
-            combo.set_active(choices.index(pastebin.syntax_default))
+            entry.set_text(pastebin.syntax_default)
 
         combo = self.get_object('expiry_combo')
         combo.remove_all()
@@ -156,8 +212,8 @@ class Paster(Gtk.Builder):
         # TODO: Get this from settings.
         combo.set_active(0)
         self.get_object('disclaimer_label').set_markup(
-            _("Make sure to read <a href='{url}'>your pastebin</a>'s terms "
-              "and conditions.").format(url=pastebin.url)
+            _("Remember to read <a href='{url}'>your pastebin</a>'s "
+              "terms and conditions.").format(url=pastebin.url)
         )
 
         self._make_sensitive()
