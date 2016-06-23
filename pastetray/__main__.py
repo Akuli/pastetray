@@ -22,40 +22,35 @@
 """Run the program."""
 
 import argparse
-import os
 import sys
 
-import filelock
 from gi.repository import Gtk
 
-from pastetray import _, backend, filepaths, functions, preferences, trayicon
+from pastetray import _, backend, functions, lock, preferences, trayicon
 
 
 def main(args=None):
     """Run the program."""
     parser = argparse.ArgumentParser()
     parser.parse_args(args)
-    lock = filelock.FileLock(os.path.join(filepaths.user_cache_dir, 'lock'))
 
     try:
-        with lock.acquire(timeout=0):
+        with lock.locked():
             preferences.load()
             backend.load()
             trayicon.load()
             functions.update_trayicon()
             Gtk.main()
-
-    except filelock.Timeout:
+    except lock.IsLocked:
         dialog = Gtk.MessageDialog(
-            # Setting None as the parent is usually a bad idea, but in
-            # this case there is no parent window.
+            # Setting None as the parent is usually a bad idea, but
+            # PasteTray has no parent window.
             None, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK,
             _("{} is already running.").format("PasteTray"),
         )
         dialog.set_title("PasteTray")
         dialog.run()
         dialog.destroy()
-
     finally:
         preferences.save()
         backend.save()
