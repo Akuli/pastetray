@@ -145,14 +145,14 @@ class Paster(Gtk.Builder):
             combo = self.get_object('syntax_combo')
             combo.remove_all()
             for choice in choices:
-                combo.append_text(_("Never") if choice is None else choice)
+                combo.append_text(choice)
             # TODO: Get this from settings.
             combo.set_active(choices.index(pastebin.syntax_default))
 
         combo = self.get_object('expiry_combo')
         combo.remove_all()
         for choice in pastebin.expiry_days:
-            combo.append_text(str(choice))
+            combo.append_text(_("Never") if choice is None else str(choice))
         # TODO: Get this from settings.
         combo.set_active(0)
         self.get_object('disclaimer_label').set_markup(
