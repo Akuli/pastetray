@@ -16,6 +16,7 @@ PasteTray. Just click the link.
 - [GitHub Gist](https://gist.github.com/)
 - [hastebin](http://hastebin.com/)
 - [Paste ofCode](http://paste.ofcode.org/)
+- [termbin.com](http://termbin.com/)
 
 [Writing custom pastebin scripts in Python](writing_pastebins.md) is
 also possible.
