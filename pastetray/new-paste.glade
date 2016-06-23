@@ -11,7 +11,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkEntry" id="title_entry">
+          <object class="GtkEntry" id="title-entry">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
           </object>
@@ -37,7 +37,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="pastebin_label">
+          <object class="GtkLabel" id="pastebin-label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
@@ -51,7 +51,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="expiry_label">
+          <object class="GtkLabel" id="expiry-label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
@@ -64,7 +64,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="username_label">
+          <object class="GtkLabel" id="username-label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
@@ -77,7 +77,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="syntax_label">
+          <object class="GtkLabel" id="syntax-label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
@@ -90,7 +90,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="username_entry">
+          <object class="GtkEntry" id="username-entry">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="hexpand">True</property>
@@ -103,7 +103,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkComboBoxText" id="pastebin_combo">
+          <object class="GtkComboBoxText" id="pastebin-combo">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
@@ -131,7 +131,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="cancel_button">
+              <object class="GtkButton" id="cancel-button">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -145,7 +145,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="paste_button">
+              <object class="GtkButton" id="paste-button">
                 <property name="label">gtk-paste</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -167,7 +167,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="disclaimer_label">
+          <object class="GtkLabel" id="disclaimer-label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
@@ -184,7 +184,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkComboBoxText" id="expiry_combo">
+          <object class="GtkComboBoxText" id="expiry-combo">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
@@ -201,7 +201,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkEntry" id="syntax_entry">
+              <object class="GtkEntry" id="syntax-entry">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
               </object>
@@ -212,7 +212,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkImage" id="syntax_image">
+              <object class="GtkImage" id="syntax-image">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="stock">gtk-missing-image</property>

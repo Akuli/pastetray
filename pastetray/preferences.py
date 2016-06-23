@@ -85,7 +85,7 @@ def connect_property(widget, prop, section, key):
 
 def load():
     """Load configuration files."""
-    default_conf = resource_string('pastetray', 'default_settings.conf')
+    default_conf = resource_string('pastetray', 'default-settings.conf')
     _config.read_string(default_conf.decode('utf-8'))
     _config.read([_USER_CONFIG])
 

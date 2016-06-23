@@ -91,37 +91,37 @@ class Paster(Gtk.Builder):
         called with the paste URL as the only argument.
         """
         Gtk.Builder.__init__(self)
-        data = resource_string('pastetray', 'new_paste.glade')
+        data = resource_string('pastetray', 'new-paste.glade')
         self.add_from_string(data.decode('utf-8'))
 
         self._postpaste_funcs = postpaste_funcs
         get = self.get_object
 
         # TODO: Use preferences, and add scrollbars!
-        get('title_entry').set_tooltip_text(_("The title of this paste"))
+        get('title-entry').set_tooltip_text(_("The title of this paste"))
         get('textview').set_tooltip_text(_("The content of this paste"))
         get('textview').override_font(Pango.FontDescription('monospace'))
 
-        get('expiry_label').set_label(_("Expiry in days:"))
-        get('username_label').set_label(_("Your name or nick:"))
-        get('username_entry').set_text(os.getlogin())   # from settings
+        get('expiry-label').set_label(_("Expiry in days:"))
+        get('username-label').set_label(_("Your name or nick:"))
+        get('username-entry').set_text(os.getlogin())   # from settings
 
-        get('syntax_label').set_label(_("Syntax highlighting:"))
+        get('syntax-label').set_label(_("Syntax highlighting:"))
         self._syntax_completion = _EntryCompletion(
-            get('syntax_entry'), get('syntax_image'),
+            get('syntax-entry'), get('syntax-image'),
             _("No syntax highlighting named {!r}"),
         )
 
-        get('pastebin_label').set_label(_("Pastebin:"))
+        get('pastebin-label').set_label(_("Pastebin:"))
         pastebin_names = sorted(backend.pastebins.keys(), key=str.lower)
         for name in pastebin_names:
-            get('pastebin_combo').append_text(name)
-        get('pastebin_combo').set_active(0)      # from settings
-        get('pastebin_combo').connect('changed', self._on_pastebin_changed)
+            get('pastebin-combo').append_text(name)
+        get('pastebin-combo').set_active(0)      # from settings
+        get('pastebin-combo').connect('changed', self._on_pastebin_changed)
         self._on_pastebin_changed()
 
-        get('paste_button').connect('clicked', self._on_paste_clicked)
-        get('cancel_button').connect('clicked', self._destroy)
+        get('paste-button').connect('clicked', self._on_paste_clicked)
+        get('cancel-button').connect('clicked', self._destroy)
         get('window').set_title(_("New paste") + " - PasteTray")
         get('window').connect('delete-event', self._destroy)
 
@@ -129,7 +129,7 @@ class Paster(Gtk.Builder):
 
     def _get_pastebin(self):
         """Return currently selected pastebin."""
-        combo = self.get_object('pastebin_combo')
+        combo = self.get_object('pastebin-combo')
         pastebin_name = combo.get_active_text()
         return backend.pastebins[pastebin_name]
 
@@ -140,7 +140,7 @@ class Paster(Gtk.Builder):
 
     def _get_expiry(self):
         """Return currently selected expiry."""
-        combo = self.get_object('expiry_combo')
+        combo = self.get_object('expiry-combo')
         text = combo.get_active_text()
         return None if text == _("Never") else int(text)
 
@@ -152,7 +152,7 @@ class Paster(Gtk.Builder):
         pastebin.paste().
         """
         pastebin = self._get_pastebin()
-        entry = self.get_object('syntax_entry')
+        entry = self.get_object('syntax-entry')
         syntax_name = entry.get_text()
         syntax_default = pastebin.syntax_choices[pastebin.syntax_default]
         return pastebin.syntax_choices.get(syntax_name, syntax_default)
@@ -164,17 +164,17 @@ class Paster(Gtk.Builder):
         insensitives = [self.get_object('progressbar')]
         if 'title' not in pastebin.paste_args:
             insensitives.append(self.get_object('title_label'))
-            insensitives.append(self.get_object('title_entry'))
+            insensitives.append(self.get_object('title-entry'))
         if 'syntax' not in pastebin.paste_args:
-            insensitives.append(self.get_object('syntax_label'))
-            insensitives.append(self.get_object('syntax_entry'))
-            insensitives.append(self.get_object('syntax_image'))
+            insensitives.append(self.get_object('syntax-label'))
+            insensitives.append(self.get_object('syntax-entry'))
+            insensitives.append(self.get_object('syntax-image'))
         if 'username' not in pastebin.paste_args:
-            insensitives.append(self.get_object('username_label'))
-            insensitives.append(self.get_object('username_entry'))
+            insensitives.append(self.get_object('username-label'))
+            insensitives.append(self.get_object('username-entry'))
         if len(pastebin.expiry_days) < 2:
-            insensitives.append(self.get_object('expiry_label'))
-            insensitives.append(self.get_object('expiry_combo'))
+            insensitives.append(self.get_object('expiry-label'))
+            insensitives.append(self.get_object('expiry-combo'))
 
         for obj in self.get_objects():
             obj.set_sensitive(obj not in insensitives)
@@ -193,17 +193,17 @@ class Paster(Gtk.Builder):
         if 'syntax' in pastebin.paste_args:
             completions = pastebin.syntax_choices.keys()
             self._syntax_completion.set_completions(completions)
-            entry = self.get_object('syntax_entry')
+            entry = self.get_object('syntax-entry')
             # TODO: Get this from settings.
             entry.set_text(pastebin.syntax_default)
 
-        combo = self.get_object('expiry_combo')
+        combo = self.get_object('expiry-combo')
         combo.remove_all()
         for choice in pastebin.expiry_days:
             combo.append_text(_("Never") if choice is None else str(choice))
         # TODO: Get this from settings.
         combo.set_active(0)
-        self.get_object('disclaimer_label').set_markup(
+        self.get_object('disclaimer-label').set_markup(
             _("Remember to read <a href='{url}'>your pastebin</a>'s "
               "terms and conditions.").format(url=pastebin.url)
         )
@@ -217,8 +217,8 @@ class Paster(Gtk.Builder):
             'content': self._get_content,
             'expiry': self._get_expiry,
             'syntax': self._get_syntax,
-            'title': self.get_object('title_entry').get_text,
-            'username': self.get_object('username_entry').get_text,
+            'title': self.get_object('title-entry').get_text,
+            'username': self.get_object('username-entry').get_text,
         }
         kwargs = {arg: getters[arg]() for arg in pastebin.paste_args}
 

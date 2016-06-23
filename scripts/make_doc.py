@@ -89,7 +89,7 @@ def main():
 
     # HTML files
     files = [('README.md', 'index.html'),
-             ('writing_pastebins.md', 'writing_pastebins.html')]
+             ('writing-pastebins.md', 'writing-pastebins.html')]
     for src, dst in files:
         with open(src, 'r') as f:
             md = f.read()
