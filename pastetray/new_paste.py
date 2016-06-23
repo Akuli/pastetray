@@ -127,20 +127,22 @@ class Paster(Gtk.Builder):
 
         _pasters.append(self)
 
-    def _get_title(self):
-        """Return the title the user has entered."""
-        return self.get_object('title_entry').get_text()
+    def _get_pastebin(self):
+        """Return currently selected pastebin."""
+        combo = self.get_object('pastebin_combo')
+        pastebin_name = combo.get_active_text()
+        return backend.pastebins[pastebin_name]
 
     def _get_content(self):
         """Return the content to paste."""
         buf = self.get_object('textview').get_buffer()
         return buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
 
-    def _get_pastebin(self):
-        """Return currently selected pastebin."""
-        combo = self.get_object('pastebin_combo')
-        pastebin_name = combo.get_active_text()
-        return backend.pastebins[pastebin_name]
+    def _get_expiry(self):
+        """Return currently selected expiry."""
+        combo = self.get_object('expiry_combo')
+        text = combo.get_active_text()
+        return None if text == _("Never") else int(text)
 
     def _get_syntax(self):
         """Return currently selected syntax.
@@ -154,16 +156,6 @@ class Paster(Gtk.Builder):
         syntax_name = entry.get_text()
         syntax_default = pastebin.syntax_choices[pastebin.syntax_default]
         return pastebin.syntax_choices.get(syntax_name, syntax_default)
-
-    def _get_username(self):
-        """Return currently entered username."""
-        entry = self.get_object('username_entry')
-        return entry.get_text()
-
-    def _get_expiry(self):
-        """Return currently selected expiry."""
-        combo = self.get_object('expiry_combo')
-        return int(combo.get_active_text())
 
     def _make_sensitive(self):
         """Make most of the widgets sensitive."""
@@ -225,8 +217,8 @@ class Paster(Gtk.Builder):
             'content': self._get_content,
             'expiry': self._get_expiry,
             'syntax': self._get_syntax,
-            'title': self._get_title,
-            'username': self._get_username,
+            'title': self.get_object('title_entry').get_text,
+            'username': self.get_object('username_entry').get_text,
         }
         kwargs = {arg: getters[arg]() for arg in pastebin.paste_args}
 
@@ -268,7 +260,6 @@ class Paster(Gtk.Builder):
             url = self._response
             for func in self._postpaste_funcs:
                 func(url)
-
             dialog = Gtk.MessageDialog(
                 self.get_object('window'), Gtk.DialogFlags.MODAL,
                 Gtk.MessageType.INFO, (
@@ -278,13 +269,14 @@ class Paster(Gtk.Builder):
             )
             dialog.set_title(_("Success"))
             dialog.format_secondary_text(url)
-            if dialog.run() == Gtk.ResponseType.YES:
-                webbrowser.open(self._response)
+            response = dialog.run()
             dialog.destroy()
+            if response == Gtk.ResponseType.YES:
+                webbrowser.open(self._response)
             self._destroy()
 
         else:
-            # Failure message.
+            # Failure.
             dialog = Gtk.MessageDialog(
                 self.get_object('window'), Gtk.DialogFlags.MODAL,
                 Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
@@ -296,8 +288,25 @@ class Paster(Gtk.Builder):
             dialog.destroy()
             self._make_sensitive()
 
-    def _destroy(self, *ign):
-        """Destroy the window."""
+    def _confirm_destroy(self):
+        """Destroy the window if user wants to."""
         # TODO: Save new default paste settings here?
+        if len(self._get_content()) < 100:  # TODO: Use settings.
+            # Little content, probably not worth saving.
+            return
+        dialog = Gtk.MessageDialog(
+            self.get_object('window'), Gtk.DialogFlags.MODAL,
+            Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO,
+            _("Do you want to close this paste window without pasting?"),
+        )
+        dialog.set_title(_("Success"))
+        dialog.format_secondary_text(url)
+        response = dialog.run()
+        dialog.destroy()
+        if response == Gtk.ResponseType.YES:
+            self._destroy()
+
+    def _destroy(self, widget=None, event=None):
+        """Destroy the window."""
         self.get_object('window').destroy()
         _pasters.remove(self)
