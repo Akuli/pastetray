@@ -25,7 +25,7 @@ import socket
 
 name = 'termbin.com'
 url = 'http://termbin.com/'
-expiry_days = [None]
+expiry_days = [30]
 
 paste_args = ['content']
 
