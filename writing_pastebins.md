@@ -60,9 +60,10 @@ expiry_days = [30]
 All PasteTray pastebins need a `name`, a `url` and an `expiry_days`. The
 url should be something users can click to open the pastebin's official
 website to make a paste theirselves or read the pastebin's terms and
-conditions, and `expiry_days` should be a list of integers. In this
-case, one month is the only expiration hastebin allows so we set
-`expiry_days` to a list with nothing but 30 in it.
+conditions, and `expiry_days` should be a list of integers. You can also
+add None to expiry_days if the pastebin supports pastes that never
+expire. In this case, one month is the only expiration hastebin allows
+so we set `expiry_days` to a list with nothing but 30 in it.
 
 ```py
 paste_args = ['content']

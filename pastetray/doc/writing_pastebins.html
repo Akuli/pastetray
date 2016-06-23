@@ -92,9 +92,10 @@ to do a HTTP post later, so we'll import it.</p>
 <p>All PasteTray pastebins need a <code>name</code>, a <code>url</code> and an <code>expiry_days</code>. The
 url should be something users can click to open the pastebin's official
 website to make a paste theirselves or read the pastebin's terms and
-conditions, and <code>expiry_days</code> should be a list of integers. In this
-case, one month is the only expiration hastebin allows so we set
-<code>expiry_days</code> to a list with nothing but 30 in it.</p>
+conditions, and <code>expiry_days</code> should be a list of integers. You can also
+add None to expiry_days if the pastebin supports pastes that never
+expire. In this case, one month is the only expiration hastebin allows
+so we set <code>expiry_days</code> to a list with nothing but 30 in it.</p>
 <div class="codehilite"><pre><span></span><span class="n">paste_args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span>
 
 

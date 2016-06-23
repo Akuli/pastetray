@@ -141,12 +141,11 @@ class Paster(Gtk.Builder):
         pastebin = self._get_pastebin()
 
         if 'syntax' in pastebin.paste_args:
-            choices = list(pastebin.syntax_choices.keys())
-            choices.sort(key=str.lower)
+            choices = sorted(pastebin.syntax_choices, key=str.lower)
             combo = self.get_object('syntax_combo')
             combo.remove_all()
             for choice in choices:
-                combo.append_text(choice)
+                combo.append_text(_("Never") if choice is None else choice)
             # TODO: Get this from settings.
             combo.set_active(choices.index(pastebin.syntax_default))
 

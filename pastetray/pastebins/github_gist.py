@@ -31,7 +31,7 @@ import requests
 
 name = 'GitHub Gist'
 url = 'https://gist.github.com/'
-expiry_days = [-1]      # The pastes are not deleted automatically.
+expiry_days = [None]
 
 paste_args = ['content', 'title']
 
