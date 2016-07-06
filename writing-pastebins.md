@@ -4,19 +4,31 @@ If PasteTray doesn't support your favorite pastebin by default and you
 have some experience with programming in Python, you can write a
 PasteTray plugin.
 
-Add your pastebin script to the same directory with other pastebin
-scripts. To find out where it is, run something like this on a Python
-prompt with PasteTray installed:
+## Getting started
 
-```py
->>> import pastetray.pastebins
->>> pastetray.pastebins
-<module 'pastetray.pastebins' from '/some/path/__init__.py'>
->>> 
+First you need to clone the PasteTray GitHub repository and see if
+PasteTray can run from it:
+
+```
+git clone https://github.com/Akuli/pastetray/
+cd pastetray
+python3 -m pastetray
 ```
 
-In this case, your pastebin script should be in `/some/path`. PasteTray
-should find your pastebin script automatically when it starts.
+There should be some pastebin scripts in `pastetray/pastetray/pastebins`.
+Your pastebin script should be there too. The filename must consist of
+nothing but lowercase letters and underscores, but it must not start
+with an underscore. It should have a `.py` extension. In Python, you can
+use a regular expression to check if the pastebin filename is correct:
+
+```py
+>>> import re
+>>> bool(re.search(r'^[a-z][a-z_]*\.py$', 'my_pastebin.py'))
+True
+>>> bool(re.search(r'^[a-z][a-z_]*\.py$', '_this-Is-Not-A-Valid-Name.foobar'))
+False
+>>> 
+```
 
 ## Example: hastebin script
 
@@ -60,10 +72,10 @@ expiry_days = [30]
 All PasteTray pastebins need a `name`, a `url` and an `expiry_days`. The
 url should be something users can click to open the pastebin's official
 website to make a paste theirselves or read the pastebin's terms and
-conditions, and `expiry_days` should be a list of integers. You can also
-add None to expiry_days if the pastebin supports pastes that never
-expire. In this case, one month is the only expiration hastebin allows
-so we set `expiry_days` to a list with nothing but 30 in it.
+conditions, and `expiry_days` should be a list of integers. A negative
+value like -1 means that the paste will never expire. In this case, one
+month is the only expiration hastebin allows so we set `expiry_days` to
+a list with nothing but 30 in it.
 
 ```py
 paste_args = ['content']

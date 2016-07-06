@@ -22,21 +22,28 @@
 """Run the program."""
 
 import argparse
+import signal
 import sys
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
-from pastetray import _, backend, functions, lock, preferences, trayicon
+from pastetray import _, backend, functions, lock, settings, trayicon
+
+
+# Ctrl+C interrupting and threads.
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+GObject.threads_init()
 
 
 def main(args=None):
     """Run the program."""
+    # TODO: Add arguments to parse.
     parser = argparse.ArgumentParser()
     parser.parse_args(args)
 
     try:
         with lock.locked():
-            preferences.load()
+            settings.load()
             backend.load()
             trayicon.load()
             functions.update_trayicon()
@@ -46,13 +53,14 @@ def main(args=None):
             # Setting None as the parent is usually a bad idea, but
             # PasteTray has no parent window.
             None, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK,
+            # Maybe this project will be renamed later?
             _("{} is already running.").format("PasteTray"),
         )
         dialog.set_title("PasteTray")
         dialog.run()
         dialog.destroy()
     finally:
-        preferences.save()
+        settings.save()
         backend.save()
 
     # This function is not meant to be ran multiple times.

@@ -42,18 +42,29 @@
 <p>If PasteTray doesn't support your favorite pastebin by default and you
 have some experience with programming in Python, you can write a
 PasteTray plugin.</p>
-<p>Add your pastebin script to the same directory with other pastebin
-scripts. To find out where it is, run something like this on a Python
-prompt with PasteTray installed:</p>
-<div class="codehilite"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pastetray.pastebins</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">pastetray</span><span class="o">.</span><span class="n">pastebins</span>
-<span class="o">&lt;</span><span class="n">module</span> <span class="s1">&#39;pastetray.pastebins&#39;</span> <span class="kn">from</span> <span class="s1">&#39;/some/path/__init__.py&#39;</span><span class="o">&gt;</span>
+<h2>Getting started</h2>
+<p>First you need to clone the PasteTray GitHub repository and see if
+PasteTray can run from it:</p>
+<div class="codehilite"><pre><span></span>git clone https://github.com/Akuli/pastetray/
+<span class="nb">cd</span> pastetray
+python3 -m pastetray
+</pre></div>
+
+
+<p>There should be some pastebin scripts in <code>pastetray/pastetray/pastebins</code>.
+Your pastebin script should be there too. The filename must consist of
+nothing but lowercase letters and underscores, but it must not start
+with an underscore. It should have a <code>.py</code> extension. In Python, you can
+use a regular expression to check if the pastebin filename is correct:</p>
+<div class="codehilite"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">re</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">r&#39;^[a-z][a-z_]*\.py$&#39;</span><span class="p">,</span> <span class="s1">&#39;my_pastebin.py&#39;</span><span class="p">))</span>
+<span class="bp">True</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">r&#39;^[a-z][a-z_]*\.py$&#39;</span><span class="p">,</span> <span class="s1">&#39;_this-Is-Not-A-Valid-Name.foobar&#39;</span><span class="p">))</span>
+<span class="bp">False</span>
 <span class="o">&gt;&gt;&gt;</span>
 </pre></div>
 
 
-<p>In this case, your pastebin script should be in <code>/some/path</code>. PasteTray
-should find your pastebin script automatically when it starts.</p>
 <h2>Example: hastebin script</h2>
 <p>The hastebin script in <code>pastetray/pastebins/hastebin.py</code> is one of the
 shortest pastebin scripts PasteTray comes with.</p>
@@ -92,10 +103,10 @@ to do a HTTP post later, so we'll import it.</p>
 <p>All PasteTray pastebins need a <code>name</code>, a <code>url</code> and an <code>expiry_days</code>. The
 url should be something users can click to open the pastebin's official
 website to make a paste theirselves or read the pastebin's terms and
-conditions, and <code>expiry_days</code> should be a list of integers. You can also
-add None to expiry_days if the pastebin supports pastes that never
-expire. In this case, one month is the only expiration hastebin allows
-so we set <code>expiry_days</code> to a list with nothing but 30 in it.</p>
+conditions, and <code>expiry_days</code> should be a list of integers. A negative
+value like -1 means that the paste will never expire. In this case, one
+month is the only expiration hastebin allows so we set <code>expiry_days</code> to
+a list with nothing but 30 in it.</p>
 <div class="codehilite"><pre><span></span><span class="n">paste_args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span>
 
 

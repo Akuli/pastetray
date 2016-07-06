@@ -25,31 +25,38 @@ import collections
 import importlib
 import os
 import re
+import threading
 
 from pastetray import filepaths
 from pastetray.filepaths import resource_listdir
 
 
-pastebins = {}    # These are name:module pairs.
+pastebins = {}    # These are name: module pairs.
 recent_pastes = collections.deque(maxlen=10)
 
 _RECENT_PASTES_PATH = os.path.join(filepaths.user_config_dir,
                                    'recent_pastes.txt')
 
 
+class PastebinError(Exception):
+    """This is raised when a pastebin script is causing issues."""
+
+
 def load():
     """Load pastebins and recent pastes."""
     pastebins.clear()
     for name in resource_listdir('pastetray', 'pastebins'):
-        if '__' in name or not re.search(r'^[A-Za-z_]+\.py$', name):
-            # Not a valid PasteTray pastebin module.
+        if not re.search(r'^[a-z][a-z_]*\.py$', name):
+            # Not a valid PasteTray pastebin module name.
             continue
         modulename = 'pastetray.pastebins.' + os.path.splitext(name)[0]
         module = importlib.import_module(modulename)
         if module.name in pastebins:
-            raise Exception("there are two pastebins named {!r}"
-                            .format(module.name))
+            raise PastebinError("there are two pastebins named {!r}"
+                                .format(module.name))
         pastebins[module.name] = module
+    if not pastebins:
+        raise PastebinError("no pastebins found")
 
     recent_pastes.clear()
     try:
@@ -65,3 +72,32 @@ def save():
     with open(_RECENT_PASTES_PATH, 'w') as f:
         for url in recent_pastes:
             print(url, file=f)
+
+
+class PastingThread(threading.Thread):
+    """Thread for pasting.
+
+    When the pasting is done the thread's .is_alive() method will return
+    False and the thread will have two new attributes, success and
+    response. success is True if the pasting succeeded and otherwise
+    False, and response will be the paste's URL or an error message.
+    """
+
+    def __init__(self, pastebin, getters, **kwargs):
+        """Initialize the thread.
+
+        The getters argument should be a dictionary of possible pastebin
+        paste_args and functions or methods for getting values for them.
+        """
+        threading.Thread.__init__(self, **kwargs)
+        self._pastebin = pastebin
+        self._kwargs = {arg: getters[arg]() for arg in pastebin.paste_args}
+
+    def run(self):
+        """Call the pastebin's .paste() method."""
+        try:
+            self.response = str(self._pastebin.paste(**self._kwargs))
+            self.success = True
+        except Exception as e:
+            self.response = "{.__name__}: {}".format(type(e), e)
+            self.success = False

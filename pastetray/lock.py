@@ -36,7 +36,7 @@ else:
 _LOCKFILE = os.path.join(filepaths.user_cache_dir, 'lock')
 
 
-class IsLocked(BlockingIOError):
+class IsLocked(OSError):
     """The lockfile has been locked by another process."""
 
 
@@ -50,8 +50,8 @@ def _windows_locked():
             f.write(content)
             f.seek(0)
             msvcrt.locking(f.fileno(), msvcrt.LK_NBRLCK, len(content))
-        except OSError:
-            raise IsLocked from None
+        except OSError as e:
+            raise IsLocked from e
         yield
         # Closing the file will release the lock.
 
@@ -62,9 +62,8 @@ def _unix_locked():
     with open(_LOCKFILE, 'w') as fd:
         try:
             fcntl.lockf(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except (PermissionError, BlockingIOError):
-            # The errno is EACCESS or EAGAIN.
-            raise IsLocked from None
+        except OSError as e:
+            raise IsLocked from e
         yield
         fcntl.lockf(fd, fcntl.LOCK_UN)
 

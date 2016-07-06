@@ -21,28 +21,29 @@
 
 """Functions for the trayicon."""
 
-import webbrowser
 from urllib.request import pathname2url
+import webbrowser
 
 from gi.repository import Gtk, GdkPixbuf
 from pkg_resources import resource_string
 
 import pastetray
-from pastetray import _, backend, new_paste, preference_editor, trayicon
+from pastetray import _, backend, new_paste, settings, trayicon
 from pastetray.filepaths import resource_filename, resource_listdir
 
 
 def make_new_paste(widget=None):
     """Make a new paste."""
     postfuncs = backend.recent_pastes.appendleft, update_trayicon
-    paster = new_paste.Paster(postpaste_funcs=postfuncs)
-    paster.get_object('window').show_all()
+    pastewindow = new_paste.NewPasteWindow(postpaste_funcs=postfuncs)
+    pastewindow.show()
 
 
-def change_preferences(widget=None):
-    """Open window for editing preferences."""
-    window = preference_editor.PreferenceWindow()
-    window.show_all()
+def change_settings(widget=None):
+    """Open a window for changing the settings."""
+    dialog = settings.SettingDialog()
+    dialog.run()
+    dialog.destroy()
 
 
 def clear_recent_pastes(widget=None):
@@ -120,7 +121,7 @@ def _menuitems():
     data = [
         (Gtk.STOCK_NEW, _("New paste"), make_new_paste),
         (Gtk.STOCK_CLEAR, _("Clear recent pastes"), clear_recent_pastes),
-        (Gtk.STOCK_PREFERENCES, _("Preferences"), change_preferences),
+        (Gtk.STOCK_PREFERENCES, _("Preferences"), change_settings),
         (Gtk.STOCK_HELP, _("Help"), show_help_page),
         (Gtk.STOCK_ABOUT, _("About"), show_about_dialog),
         (Gtk.STOCK_QUIT, _("Quit"), Gtk.main_quit),

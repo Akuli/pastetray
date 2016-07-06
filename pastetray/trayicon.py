@@ -22,17 +22,20 @@
 """The application indicator/tray icon."""
 
 
+import gi
 from gi.repository import Gtk, Gdk
 
 from pastetray.filepaths import resource_filename
 
 try:
+    gi.require_version('AppIndicator3', '0.1')
     from gi.repository import AppIndicator3     # NOQA
 except ImportError:
     # Gtk.StatusIcon is deprecated in new versions of GTK+.
     if not hasattr(Gtk, 'StatusIcon'):
-        raise ImportError("AppIndicator3 is not installed and Gtk.StatusIcon "
-                          "is deprecated in the current version of GTK+")
+        raise ImportError("AppIndicator3 is not installed and "
+                          "Gtk.StatusIcon is deprecated in "
+                          "this version of GTK+") from None
     print("AppIndicator3 is not installed, Gtk.StatusIcon "
           "will be used instead.")
     AppIndicator3 = None
@@ -51,18 +54,18 @@ def _on_click(statusicon, button, time):
 
 def load():
     """Load the trayicon."""
-    global _trayicon      # Avoid garbage collection.
+    global __trayicon      # Avoid garbage collection.
 
     icon_filename = resource_filename('pastetray', 'icons/24x24.png')
     if AppIndicator3 is None:
-        _trayicon = Gtk.StatusIcon()
-        _trayicon.set_from_file(icon_filename)
-        _trayicon.connect('popup-menu', _on_click)
-        _trayicon.connect('activate', _on_click, Gdk.BUTTON_PRIMARY, None)
+        __trayicon = Gtk.StatusIcon()
+        __trayicon.set_from_file(icon_filename)
+        __trayicon.connect('popup-menu', _on_click)
+        __trayicon.connect('activate', _on_click, Gdk.BUTTON_PRIMARY, None)
     else:
-        _trayicon = AppIndicator3.Indicator.new(
+        __trayicon = AppIndicator3.Indicator.new(
             'pastetray', icon_filename,
             AppIndicator3.IndicatorCategory.APPLICATION_STATUS,
         )
-        _trayicon.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
-        _trayicon.set_menu(menu)
+        __trayicon.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        __trayicon.set_menu(menu)

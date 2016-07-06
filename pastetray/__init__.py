@@ -21,16 +21,15 @@
 
 """Simple program for using online pastebins.
 
-This file sets up many things, such as internationalization, GTK+,
-threading and Ctrl+C interrupting.
+This program displays a paste icon in the system tray. The tray icon can
+be clicked and new pastes to online pastebins can be easily made.
 """
+
 
 import gettext
 import locale
-import signal
 
 import gi
-from gi.repository import GObject
 from pkg_resources import resource_stream
 
 
@@ -47,17 +46,13 @@ def _get_translation():
         except OSError:
             if '_' in lang:
                 # Remove the last part and keep going.
-                lang = lang.rpartition('_')[0]
+                lang = lang.rsplit('_', 1)[0]
             else:
                 # Give up.
                 lang = None
     return gettext.NullTranslations()
 
 _ = _get_translation().gettext
-gi.require_version('Gtk', '3.0')
-gi.require_version('GdkPixbuf', '2.0')
-GObject.threads_init()
-signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
 # Add your name here if you've helped with making this program but your
@@ -67,22 +62,30 @@ TRANSLATORS = {
     _("Finnish"): "Akuli",
 }
 
-# General information. Only string literals are passed to _() to make
-# sure pygettext will work properly.
-SHORT_DESC = _("simple application for using online pastebins")
-LONG_DESC = _("This program displays a paste icon in the system tray. "
-              "The tray icon can be clicked and new pastes to online "
-              "pastebins can be easily made.")
+# General information.
+SHORT_DESC_TRANS = _("Simple program for using online pastebins.")
+SHORT_DESC, LONG_DESC = __doc__.split('\n\n', 1)
+LONG_DESC = LONG_DESC.strip().replace('\n', ' ')
 
 URL = 'https://github.com/Akuli/pastetray/'
-VERSION = '1.0-beta'
+VERSION = '1.0-dev'
 KEYWORDS = ["pastebin", "Gtk+3"]
 USER_AGENT = "PasteTray/" + VERSION
 
 # The setup.py needs to do other checks too because some dependencies
 # cannot be installed with pip.
-PIP_DEPENDS = ['appdirs', 'lockfile', 'requests']
-# This list is more complete, but there's no python3-lockfile yet.
-DEBIAN_DEPENDS = ['python3-appdirs', 'python3-lockfile',
-                  'python3-pkg_resources', 'python3-requests', 'python3-gi',
-                  'gir1.2-gtk-3.0', 'gir1.2-appindicator3-0.1']
+PIP_DEPENDS = ['appdirs', 'requests']
+
+# This list is more complete.
+DEBIAN_DEPENDS = ['python3-appdirs', 'python3-pkg_resources',
+                  'python3-requests', 'python3-gi', 'gir1.2-gtk-3.0',
+                  'gir1.2-appindicator3-0.1']
+
+
+# GI version requirements.
+gi.require_version('Gtk', '3.0')
+gi.require_version('Gdk', '3.0')
+gi.require_version('GdkPixbuf', '2.0')
+gi.require_version('GObject', '2.0')
+gi.require_version('GLib', '2.0')
+gi.require_version('Pango', '1.0')
